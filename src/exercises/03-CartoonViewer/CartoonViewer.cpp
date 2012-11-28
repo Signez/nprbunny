@@ -42,6 +42,7 @@ init()
 	m_cartoonShader.create("cartoon.vs", "cartoon.fs");
 	m_depthShader.create("depth.vs", "depth.fs");
 	m_edgeShader.create("edge.vs", "edge.fs");
+	m_shakingShader.create("shaking.vs", "shaking.fs");
 	m_blendingShader.create("blending.vs","blending.fs");
 
 	// setup 1D color texture with 4 colors
@@ -70,15 +71,17 @@ reshape(int _w, int _h)
 	// resize framebuffer and textures
 	m_fbo.create(_w,_h, true);
 	
-	m_cartoonOutputTexture.create(_w,_h,GL_RGB,GL_RGB,GL_UNSIGNED_BYTE);
+	m_cartoonOutputTexture.create(_w,_h,GL_RGB,GL_RGB,GL_UNSIGNED_INT);
 	// try GL_RGB4, GL_RGB8, GL_RGB10, GL_RGB16 to see effect of edge precision
-	m_depthTexture.create(_w,_h,GL_RGB16,GL_RGB,GL_UNSIGNED_BYTE);
-	m_edgeTexture.create(_w,_h,GL_RGB,GL_RGB,GL_UNSIGNED_BYTE);
+	m_depthTexture.create(_w,_h,GL_RGBA16,GL_RGB,GL_FLOAT);
+	m_edgeTexture.create(_w,_h,GL_RGB,GL_RGB,GL_UNSIGNED_INT);
+	m_shakeEdgeTexture.create(_w,_h,GL_RGB,GL_RGB,GL_UNSIGNED_INT);
 	
 	// attach textures to frame buffer
 	m_fbo.attachTexture(GL_COLOR_ATTACHMENT0_EXT, m_cartoonOutputTexture.getID());
 	m_fbo.attachTexture(GL_COLOR_ATTACHMENT1_EXT, m_depthTexture.getID());
 	m_fbo.attachTexture(GL_COLOR_ATTACHMENT2_EXT, m_edgeTexture.getID());
+	m_fbo.attachTexture(GL_COLOR_ATTACHMENT3_EXT, m_shakeEdgeTexture.getID());
 	
 }
 
@@ -150,6 +153,11 @@ draw_scene(DrawMode _draw_mode)
 	// calculate edges on depth image
 	m_fbo.bind(GL_COLOR_ATTACHMENT2_EXT);
 	drawEdge();
+	m_fbo.unbind();
+
+	// shake the edges
+	m_fbo.bind(GL_COLOR_ATTACHMENT3_EXT);
+	shakeEdge();
 	m_fbo.unbind();
 	
 	// blend edges and cartoon shading
@@ -234,10 +242,14 @@ drawDepth() {
 	m_depthShader.setMatrix4x4Uniform("worldcamera", m_camera.getTransformation().Inverse());
 	m_depthShader.setMatrix4x4Uniform("projection", m_camera.getProjectionMatrix());
 	m_depthShader.setMatrix4x4Uniform("modelworld", m_mesh.getTransformation() );
+	m_depthShader.setMatrix3x3Uniform("worldcameraNormal", m_camera.getTransformation().Transpose());
+	m_depthShader.setMatrix3x3Uniform("modelworldNormal", m_mesh.getTransformation().Inverse().Transpose());
+
 	m_depthShader.setFloatUniform("near",m_camera.getNearPlane());
 	m_depthShader.setFloatUniform("far",m_camera.getFarPlane());
 	
 	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_NORMAL_ARRAY);
 	
 	glVertexPointer( 3, GL_DOUBLE, 0, m_mesh.getVertexPointer() );
 	
@@ -246,12 +258,12 @@ drawDepth() {
 		glDrawElements( GL_TRIANGLES, m_mesh.getNumberOfFaces(i)*3, GL_UNSIGNED_INT, m_mesh.getVertexIndicesPointer(i) );
 	}
 
+	glDisableClientState(GL_NORMAL_ARRAY);
 	glDisableClientState(GL_VERTEX_ARRAY);
 	
 	m_depthShader.unbind();
 	
 }
-
 
 //-----------------------------------------------------------------------------
 
@@ -282,9 +294,9 @@ drawEdge() {
 	glDisable(GL_DEPTH_TEST);
 	
 	m_edgeShader.bind(); 
-	m_depthTexture.setLayer(0);
+	//m_depthTexture.setLayer(0);
 	m_depthTexture.bind();
-	m_edgeShader.setIntUniform("texture",m_depthTexture.getLayer());
+	m_edgeShader.setIntUniform("texture", m_depthTexture.getLayer());
 	m_edgeShader.setFloatUniform("dx",1.0/width_);
 	m_edgeShader.setFloatUniform("dy",1.0/height_);
 	
@@ -292,6 +304,27 @@ drawEdge() {
 	renderFullScreenQuad();
 	
 	m_edgeShader.unbind();
+	
+}
+
+
+//-----------------------------------------------------------------------------
+void 
+CartoonViewer::
+shakeEdge() {
+	
+	// clear screen
+	glDisable(GL_DEPTH_TEST);
+	
+	m_shakingShader.bind(); 
+	//m_depthTexture.setLayer(0);
+	m_edgeTexture.bind();
+	m_shakingShader.setIntUniform("texture", m_edgeTexture.getLayer());
+	
+	// render a quad over full image
+	renderFullScreenQuad();
+	
+	m_shakingShader.unbind();
 	
 }
 
@@ -307,9 +340,13 @@ blendCartoonAndEdge() {
 	m_cartoonOutputTexture.setLayer(0);
 	m_cartoonOutputTexture.bind();
 	m_blendingShader.setIntUniform("texture1",m_cartoonOutputTexture.getLayer());
-	m_edgeTexture.setLayer(1);
+	/*m_edgeTexture.setLayer(1);
 	m_edgeTexture.bind();
-	m_blendingShader.setIntUniform("texture2",m_edgeTexture.getLayer());
+	m_blendingShader.setIntUniform("texture2",m_edgeTexture.getLayer());*/
+
+	m_shakeEdgeTexture.setLayer(1);
+	m_shakeEdgeTexture.bind();
+	m_blendingShader.setIntUniform("texture2",m_shakeEdgeTexture.getLayer());
 	
 	
 	// render a quad over full image

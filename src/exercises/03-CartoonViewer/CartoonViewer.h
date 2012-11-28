@@ -54,6 +54,7 @@ private:
 	void drawCartoon();
 	void drawDepth();
 	void drawEdge();
+	void shakeEdge();
 	void blendCartoonAndEdge();
 
 	void renderFullScreenQuad();
@@ -73,6 +74,9 @@ protected:
 	// depth shader
 	Shader m_depthShader;
 	
+	// shaking shader
+	Shader m_shakingShader;
+
 	// edge shader
 	Shader m_edgeShader;
 
@@ -87,9 +91,12 @@ protected:
 	
 	// depth texture
 	Texture m_depthTexture;
-	
+
 	// edge texture
 	Texture m_edgeTexture;
+
+	// shake texture
+	Texture m_shakeEdgeTexture;
 	
 	
 };

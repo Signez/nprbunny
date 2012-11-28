@@ -1,8 +1,9 @@
 varying float depth;
-
+varying vec3 normal;
 		
 void main()
 {	
-	gl_FragColor = vec4(depth,depth,depth,0);	
+	vec3 temp = vec3(0.5) + 0.5*normal;
+	gl_FragColor = vec4(temp,depth);	
 	
 }
