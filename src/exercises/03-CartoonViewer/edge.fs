@@ -28,7 +28,7 @@ void main()
 		-1., -2.,  -1.
 	);
 	
-	float M = sqrt(pow(convulationnate(xDerivation), 2) + pow(convulationnate(yDerivation), 2));
+	float M = sqrt(pow(convulationnate(xDerivation), 2.0) + pow(convulationnate(yDerivation), 2.0));
 	
     gl_FragColor.xyz = vec3(1. - 10. * M, 
 					    1. - 10. * M, 
