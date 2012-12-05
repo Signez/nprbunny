@@ -14,9 +14,10 @@ void main()
 	vec3 L = vec3(0.0, 0.0, 1.0);
 	vec3 N = normalize(normal);
 	
-	float D = max(dot(N, L), 0.0); 
+	float intensity = max(dot(N, L), 0.0);
 	
-	color = texture2D(texture, vec2(D, 0.)).xyz;
+	
+	color = texture2D(texture, gl_TexCoord[0].xy).xyz;
 
 	gl_FragColor = vec4(color, 1.0);
 	

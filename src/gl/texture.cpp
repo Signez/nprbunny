@@ -12,6 +12,7 @@
 #include "texture.h"
 #include <fstream>
 #include <cassert>
+#include <iostream>
 ///////////////////////////////////////////////////////////////////////////
 Texture::Texture() : id_(0), layer_(0), width_(0), height_(0)
 {
@@ -83,7 +84,7 @@ void Texture::create(const std::string& _fileName)
 	if(!stream.is_open()) return;
 	TGA_HEADER header;
 	stream.read((char *)(&header), sizeof(TGA_HEADER));
-	assert(header.width <= 4096 && header.height <= 4096 && header.imagetype == 2 && header.bits == 24);
+	//assert(header.width <= 4096 && header.height <= 4096 && header.imagetype == 2 && header.bits == 24);
 	clear();
 	width_ = header.width;
 	height_ = header.height;
@@ -100,7 +101,7 @@ void Texture::create(const std::string& _fileName)
 	glGenTextures(1, &id_);
 	assert(id_ != 0);
 	glBindTexture(GL_TEXTURE_2D, id_);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width_, height_, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16, width_, height_, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
 	glGenerateMipmapEXT(GL_TEXTURE_2D);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);

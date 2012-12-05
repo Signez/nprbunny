@@ -54,7 +54,8 @@ init()
 		0.8, 0.8, 0.8
 	};
 
-	m_cartoonShadingTexture.create(4, 1, GL_RGB, GL_RGB, GL_FLOAT, tex, GL_NEAREST);
+	//m_cartoonShadingTexture.create(4, 1, GL_RGB, GL_RGB, GL_FLOAT, tex, GL_NEAREST);
+	m_cartoonShadingTexture.create("../../../data/Tex_Strokes.tga");
 }
 
 
@@ -71,7 +72,7 @@ reshape(int _w, int _h)
 	// resize framebuffer and textures
 	m_fbo.create(_w,_h, true);
 	
-	m_cartoonOutputTexture.create(_w,_h,GL_RGB,GL_RGB,GL_UNSIGNED_INT);
+	m_cartoonOutputTexture.create(_w,_h,GL_RGBA16,GL_RGB,GL_UNSIGNED_INT);
 	// try GL_RGB4, GL_RGB8, GL_RGB10, GL_RGB16 to see effect of edge precision
 	m_depthTexture.create(_w,_h,GL_RGBA16,GL_RGB,GL_FLOAT);
 	m_edgeTexture.create(_w,_h,GL_RGB,GL_RGB,GL_UNSIGNED_INT);
