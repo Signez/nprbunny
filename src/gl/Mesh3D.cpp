@@ -41,26 +41,26 @@ calculateVertexNormals()
 {
 	// create 0-normals
 	m_vertexNormals = std::vector< Vector3 >( getNumberOfVertices(), Vector3(0,0,0) );
-	
+
 	for(int i = 0; i < getNumberOfFaces(); i++) {
 		int v1 = getFaceVertexIndex(i,0);
 		int v2 = getFaceVertexIndex(i,1);
 		int v3 = getFaceVertexIndex(i,2);
-		
+
 		assert( v1 < getNumberOfVertices() );
 		assert( v2 < getNumberOfVertices() );
 		assert( v3 < getNumberOfVertices() );
-		
+
 		Vector3 p = getVertexPosition( v1 );
 		Vector3 q = getVertexPosition( v2 );
 		Vector3 r = getVertexPosition( v3 );
 		Vector3 n = (q-p).cross(r-p).normalize();
-		
+
 		m_vertexNormals[v1] += n;
 		m_vertexNormals[v2] += n;
 		m_vertexNormals[v3] += n;
 	}
-	
+
 	for(int i = 0; i < getNumberOfVertices(); i++) {
 		assert( m_vertexNormals[i].length() > 0 );
 		m_vertexNormals[i] = m_vertexNormals[i].normalize();
@@ -76,23 +76,23 @@ void
 Mesh3D::
 calculateBoundingBox( Vector3 & bbMin, Vector3 & bbMax )
 {
-	
+
 	if (!m_vertexPositions.empty())
 	{
 		bbMin = m_vertexPositions[0];
 		bbMax = m_vertexPositions[0];
-		
+
 		std::vector<Vector3>::const_iterator  p_it(m_vertexPositions.begin());
 		std::vector<Vector3>::const_iterator  p_end(m_vertexPositions.end());
-		
+
 		for (; p_it!=p_end; ++p_it)
 		{
 			if( (*p_it).x < bbMin.x ) bbMin.x = (*p_it).x;
 			else if ( (*p_it).x > bbMax.x ) bbMax.x = (*p_it).x;
-			
+
 			if( (*p_it).y < bbMin.y ) bbMin.y = (*p_it).y;
 			else if ( (*p_it).y > bbMax.y ) bbMax.y = (*p_it).y;
-			
+
 			if( (*p_it).z < bbMin.z ) bbMin.z = (*p_it).z;
 			else if ( (*p_it).z > bbMax.z ) bbMax.z = (*p_it).z;
 		}
@@ -101,5 +101,29 @@ calculateBoundingBox( Vector3 & bbMin, Vector3 & bbMax )
 		printf("No vertex positions to calculate bounding box!\n");
 		assert(false);
 	}
+}
+
+//---------------------------------------------------------------------------------
+void Mesh3D::genericUV()
+{
+	try
+	{
+		for( int j = 0 ; j < getNumberOfVertices(); j+=3)
+		{
+			m_vertexUV.push_back(Vector2(0, 0));
+			m_vertexUV.push_back(Vector2(0, 1));
+			m_vertexUV.push_back(Vector2(1, 1));
+			//m_vertexIndices[i][j]
+
+		}
+		std::cout << "Done\n";
+
+	}
+	catch(...)
+	{
+		std::cerr << "Error in genericUV" << std::endl;
+	}
+
+
 }
 

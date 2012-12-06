@@ -257,6 +257,13 @@ public:
     
 	// calculate bounding box
 	void calculateBoundingBox( Vector3 & bbmin, Vector3 & bbmax );
+
+	// ---------------------------------------------------------------------------------
+
+	// for each triangle in the mesh, compute the uv coordinates of each vertex
+	// to map then to the texture
+	void genericUV();
+
     
 	
 private:

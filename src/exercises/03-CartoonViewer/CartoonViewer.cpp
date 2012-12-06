@@ -98,6 +98,7 @@ loadMesh(const std::string& filenameOBJ, const std::string& filenameMTL)
 
 	// calculate normals
 	m_mesh.calculateVertexNormals();
+	m_mesh.genericUV();
 	
 	// get bounding box & reset scene camera accordingly
 	Vector3 bbmin, bbmax;
@@ -186,7 +187,7 @@ drawCartoon() {
 	
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_NORMAL_ARRAY);
-	if(m_mesh.hasUvTextureCoord())
+	//if(m_mesh.hasUvTextureCoord())
 		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	
 	m_cartoonShadingTexture.setLayer(0);
@@ -195,36 +196,27 @@ drawCartoon() {
 	
 	glVertexPointer( 3, GL_DOUBLE, 0, m_mesh.getVertexPointer() );
 	glNormalPointer( GL_DOUBLE, 0, m_mesh.getNormalPointer() );
-	if(m_mesh.hasUvTextureCoord())
+	//if(m_mesh.hasUvTextureCoord())
 		glTexCoordPointer( 2, GL_DOUBLE, 0, m_mesh.getUvTextureCoordPointer() );
 
 	for(unsigned int i = 0; i < m_mesh.getNumberOfParts(); i++)
 	{
-		bool hasTexture = m_mesh.hasUvTextureCoord() && m_mesh.getMaterial(i).hasDiffuseTexture();
-		m_cartoonShader.setIntUniform("useTexture", hasTexture);
-		m_cartoonShader.setVector3Uniform("diffuseColor", 
-										  m_mesh.getMaterial(i).m_diffuseColor.x, 
-										  m_mesh.getMaterial(i).m_diffuseColor.y, 
-										  m_mesh.getMaterial(i).m_diffuseColor.z );
-		if(hasTexture)
-		{
-			m_mesh.getMaterial(i).m_diffuseTexture.bind();
-			m_cartoonShader.setIntUniform("textureDiffuse", m_mesh.getMaterial(i).m_diffuseTexture.getLayer());
-		}
+		bool hasTexture = m_mesh.hasUvTextureCoord();// m_mesh.getMaterial(i).hasDiffuseTexture();
 		glDrawElements( GL_TRIANGLES, m_mesh.getNumberOfFaces(i)*3, GL_UNSIGNED_INT, m_mesh.getVertexIndicesPointer(i) );
-		if(hasTexture)
-		{
-			m_mesh.getMaterial(i).m_diffuseTexture.unbind();
-		}
 	}
 	
 	glDisableClientState(GL_NORMAL_ARRAY);
 	glDisableClientState(GL_VERTEX_ARRAY);
-	if(m_mesh.hasUvTextureCoord())
+	//if(m_mesh.hasUvTextureCoord())
 		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	
 	m_cartoonShadingTexture.unbind();
 	m_cartoonShader.unbind();
+}
+
+void DrawNPR()
+{
+
 }
 
 //-----------------------------------------------------------------------------
