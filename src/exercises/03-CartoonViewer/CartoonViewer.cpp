@@ -46,13 +46,13 @@ init()
 	m_blendingShader.create("blending.vs","blending.fs");
 
 	// setup 1D color texture with 4 colors
-	float  tex[12] =
+	/*float  tex[12] =
 	{
 		0.2, 0.2, 0.2,
 		0.4, 0.4, 0.4,
 		0.6, 0.6, 0.6,
 		0.8, 0.8, 0.8
-	};
+	};*/
 
 	//m_cartoonShadingTexture.create(4, 1, GL_RGB, GL_RGB, GL_FLOAT, tex, GL_NEAREST);
 	m_cartoonShadingTexture.create("../../../data/Tex_Strokes.tga");
@@ -98,7 +98,7 @@ loadMesh(const std::string& filenameOBJ, const std::string& filenameMTL)
 
 	// calculate normals
 	m_mesh.calculateVertexNormals();
-	m_mesh.genericUV();
+	//m_mesh.genericUV();
 	
 	// get bounding box & reset scene camera accordingly
 	Vector3 bbmin, bbmax;
@@ -167,6 +167,15 @@ draw_scene(DrawMode _draw_mode)
 	
 }
 
+//--------------------------------------------------------
+void CartoonViewer::NormalPosAndUV(unsigned int x, float xUV, float yUV)
+{
+	glTexCoord2d(xUV,yUV);
+	Vector3 A_normal = m_mesh.getVertexNormal(x);
+	Vector3 A_position = m_mesh.getVertexPosition(x);
+	glNormal3f(A_normal.x, A_normal.y, A_normal.z);
+	glVertex3f(A_position.x, A_position.y, A_position.z); //v1
+}
 
 //-----------------------------------------------------------------------------
 void 
@@ -185,16 +194,16 @@ drawCartoon() {
 	m_cartoonShader.setMatrix4x4Uniform("projection", m_camera.getProjectionMatrix());
 	m_cartoonShader.setMatrix4x4Uniform("modelworld", m_mesh.getTransformation() );
 	
-	glEnableClientState(GL_VERTEX_ARRAY);
+	/*glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_NORMAL_ARRAY);
 	//if(m_mesh.hasUvTextureCoord())
-		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY);*/
 	
 	m_cartoonShadingTexture.setLayer(0);
 	m_cartoonShadingTexture.bind();
 	m_cartoonShader.setIntUniform("texture", m_cartoonShadingTexture.getLayer());
 	
-	glVertexPointer( 3, GL_DOUBLE, 0, m_mesh.getVertexPointer() );
+	/*glVertexPointer( 3, GL_DOUBLE, 0, m_mesh.getVertexPointer() );
 	glNormalPointer( GL_DOUBLE, 0, m_mesh.getNormalPointer() );
 	//if(m_mesh.hasUvTextureCoord())
 		glTexCoordPointer( 2, GL_DOUBLE, 0, m_mesh.getUvTextureCoordPointer() );
@@ -208,16 +217,35 @@ drawCartoon() {
 	glDisableClientState(GL_NORMAL_ARRAY);
 	glDisableClientState(GL_VERTEX_ARRAY);
 	//if(m_mesh.hasUvTextureCoord())
-		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-	
+		glDisableClientState(GL_TEXTURE_COORD_ARRAY);*/
+
+
+	// I'AM DOING STH WRONG HERE. MY BAD GUYS
+
+	// For each part of the mesh
+	for(unsigned int partMesh = 0; partMesh < m_mesh.getNumberOfParts(); partMesh++)
+	{
+		// For each triangle
+		for(unsigned int triangle = 0; triangle < m_mesh.getNumberOfFaces(); triangle++)
+		{
+			unsigned int x, y, z;
+			// Get each vertex of the considered triangle
+			x = m_mesh.getFaceVertexIndex(partMesh, 0, triangle);
+			y = m_mesh.getFaceVertexIndex(partMesh, 1, triangle);
+			z = m_mesh.getFaceVertexIndex(partMesh, 2, triangle);
+
+			glBegin(GL_TRIANGLES);
+				NormalPosAndUV(x,0, 1);
+				NormalPosAndUV(y, 1, 1);
+				NormalPosAndUV(z, 0, 0.5);
+			glEnd();
+		}
+	}
 	m_cartoonShadingTexture.unbind();
 	m_cartoonShader.unbind();
 }
 
-void DrawNPR()
-{
 
-}
 
 //-----------------------------------------------------------------------------
 void 

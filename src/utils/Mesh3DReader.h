@@ -153,7 +153,7 @@ private:
 		int nId1, nId2, nId3, nId4;
 		int tId1, tId2, tId3, tId4;
 		float v1, v2, v3;
-		int found1,found2;
+		unsigned int found1,found2;
 		std::string _filenameMTL;
 				
 		std::vector<Vector3> positions;
@@ -215,7 +215,7 @@ private:
 			{
 				//face
 				line = buffer;
-				found1 = (int)line.find("/");
+				found1 = (unsigned int)line.find("/");
 				bool quad = false;
 				if(found1 == string::npos)
 				{

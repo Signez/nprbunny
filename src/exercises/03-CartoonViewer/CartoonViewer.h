@@ -25,6 +25,10 @@
 #include "../../gl/texture.h"
 #include "../../gl/fbo.h"
 
+#include "GL/glut.h"
+#include "GL/gl.h"
+#include "GL/glew.h"
+
 //== CLASS DEFINITION =========================================================
 
 
@@ -56,6 +60,7 @@ private:
 	void drawEdge();
 	void shakeEdge();
 	void blendCartoonAndEdge();
+	void NormalPosAndUV(unsigned int vertexIndex, float xUV, float yUV);
 
 	void renderFullScreenQuad();
 	

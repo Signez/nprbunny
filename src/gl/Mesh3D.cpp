@@ -42,7 +42,7 @@ calculateVertexNormals()
 	// create 0-normals
 	m_vertexNormals = std::vector< Vector3 >( getNumberOfVertices(), Vector3(0,0,0) );
 
-	for(int i = 0; i < getNumberOfFaces(); i++) {
+	for(unsigned int i = 0; i < getNumberOfFaces(); i++) {
 		int v1 = getFaceVertexIndex(i,0);
 		int v2 = getFaceVertexIndex(i,1);
 		int v3 = getFaceVertexIndex(i,2);

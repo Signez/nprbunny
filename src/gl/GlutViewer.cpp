@@ -168,6 +168,7 @@ void GlutViewer::processmenu(int id)
     default:
       std::cerr << "Draw mode not supported! Switching to 'Wireframe'." << std::endl;
       draw_mode_ = WIREFRAME;
+      break;
   }
 
   glutPostRedisplay();

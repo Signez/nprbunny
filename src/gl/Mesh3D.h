@@ -93,7 +93,7 @@ public:
         return (int)m_vertexPositions.size();
     }
     
-	int getNumberOfFaces(unsigned int part = 0) const {
+	unsigned int getNumberOfFaces(unsigned int part = 0) const {
         return (int)m_vertexIndices[part].size() / 3;
     }
 
