@@ -170,14 +170,15 @@ draw_scene(DrawMode _draw_mode)
 //--------------------------------------------------------
 void CartoonViewer::NormalPosAndUV(unsigned int x, float xUV, float yUV)
 {
-	glTexCoord2d(xUV,yUV);
 	Vector3 A_normal = m_mesh.getVertexNormal(x);
 	Vector3 A_position = m_mesh.getVertexPosition(x);
-	glNormal3f(A_normal.x, A_normal.y, A_normal.z);
-	glVertex3f(A_position.x, A_position.y, A_position.z); //v1
+	glVertex3d(A_position.x, A_position.y, A_position.z); //v1
+	glNormal3d(A_normal.x, A_normal.y, A_normal.z);
+	glTexCoord2d(xUV,yUV);
 }
 
 //-----------------------------------------------------------------------------
+
 void 
 CartoonViewer::
 drawCartoon() {
@@ -198,10 +199,13 @@ drawCartoon() {
 	glEnableClientState(GL_NORMAL_ARRAY);
 	//if(m_mesh.hasUvTextureCoord())
 		glEnableClientState(GL_TEXTURE_COORD_ARRAY);*/
+
+	
 	
 	m_cartoonShadingTexture.setLayer(0);
 	m_cartoonShadingTexture.bind();
 	m_cartoonShader.setIntUniform("texture", m_cartoonShadingTexture.getLayer());
+	glHint(GL_PERSPECTIVE_CORRECTION_HINT,GL_NICEST);
 	
 	/*glVertexPointer( 3, GL_DOUBLE, 0, m_mesh.getVertexPointer() );
 	glNormalPointer( GL_DOUBLE, 0, m_mesh.getNormalPointer() );
@@ -230,17 +234,20 @@ drawCartoon() {
 		{
 			unsigned int x, y, z;
 			// Get each vertex of the considered triangle
-			x = m_mesh.getFaceVertexIndex(partMesh, 0, triangle);
-			y = m_mesh.getFaceVertexIndex(partMesh, 1, triangle);
-			z = m_mesh.getFaceVertexIndex(partMesh, 2, triangle);
+			x = m_mesh.getFaceVertexIndex(triangle, 0, partMesh);
+			y = m_mesh.getFaceVertexIndex(triangle, 1, partMesh);
+			z = m_mesh.getFaceVertexIndex(triangle, 2, partMesh);
 
 			glBegin(GL_TRIANGLES);
-				NormalPosAndUV(x,0, 1);
-				NormalPosAndUV(y, 1, 1);
-				NormalPosAndUV(z, 0, 0.5);
+				NormalPosAndUV(x ,0.0, 0.0);
+				NormalPosAndUV(y , 0, 0.1);
+				NormalPosAndUV(z , 0.1, 0.1);
 			glEnd();
 		}
 	}
+
+	glDisable(GL_TEXTURE_2D);
+
 	m_cartoonShadingTexture.unbind();
 	m_cartoonShader.unbind();
 }
@@ -273,6 +280,7 @@ drawDepth() {
 	glEnableClientState(GL_NORMAL_ARRAY);
 	
 	glVertexPointer( 3, GL_DOUBLE, 0, m_mesh.getVertexPointer() );
+	glNormalPointer( GL_DOUBLE, 0, m_mesh.getNormalPointer() );
 	
 	for(unsigned int i = 0; i < m_mesh.getNumberOfParts(); i++)
 	{
