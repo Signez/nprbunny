@@ -239,9 +239,9 @@ drawCartoon() {
 			z = m_mesh.getFaceVertexIndex(triangle, 2, partMesh);
 
 			glBegin(GL_TRIANGLES);
-				NormalPosAndUV(x ,0.0, 0.0);
-				NormalPosAndUV(y , 0, 0.1);
-				NormalPosAndUV(z , 0.1, 0.1);
+				NormalPosAndUV(x ,0.01, 0.01);
+				NormalPosAndUV(y , 0.0, 0.99);
+				NormalPosAndUV(z , 0.99, 0.99);
 			glEnd();
 		}
 	}

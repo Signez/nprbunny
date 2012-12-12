@@ -11,9 +11,9 @@ void main()
 	float intensity = max(dot(N, L), 0.0);
 
 	vec2 Coords = gl_TexCoord[0].xy;
-	float index = floor((1- intensity) * 15);
-	Coords.x = Coords.x + floor(mod(index, 4.0)) / 4.0;
-	Coords.y = Coords.y + floor(index / 4.0) / 4.0;
+	float index = floor( (1. - intensity) * 16.0);
+	Coords.x = 1. - ( Coords.x/4.0 + float(mod(index, 4.0)) / 4.0 );
+	Coords.y = 1.- ( Coords.y/4.0 + float(floor(index / 4.0)) / 4.0);
 	
 	
 	

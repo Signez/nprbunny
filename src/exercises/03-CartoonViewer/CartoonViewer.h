@@ -25,9 +25,6 @@
 #include "../../gl/texture.h"
 #include "../../gl/fbo.h"
 
-#include "GL/glut.h"
-#include "GL/gl.h"
-#include "GL/glew.h"
 
 //== CLASS DEFINITION =========================================================
 

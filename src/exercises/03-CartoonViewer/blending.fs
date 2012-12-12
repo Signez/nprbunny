@@ -8,6 +8,6 @@ void main()
 	vec4 edgeColor = texture2D(texture2, gl_TexCoord[0].xy );
 	
 	//gl_FragColor = cartoonColor;
-	gl_FragColor = edgeColor * cartoonColor;
+	gl_FragColor = cartoonColor;// edgeColor * cartoonColor;
 	
 }

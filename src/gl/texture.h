@@ -13,7 +13,6 @@
 #define __TEXTURE_H__
 #include <string>
 #include "gl.h"
-#include "GL/glut.h"
 
 
 
