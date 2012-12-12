@@ -51,9 +51,9 @@ GlutViewer(const char* _title, int _width, int _height)
 	glutIdleFunc(idle__);
   
   //Init glew for windows
-  //#ifdef _WIN32
+  #ifdef _WIN32
     glewInit();
-  //#endif
+  #endif
 
   // create popupmenu
   //create_popup_menu();

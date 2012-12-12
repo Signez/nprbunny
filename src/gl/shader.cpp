@@ -109,6 +109,7 @@ void Shader::create(const std::string _vertexFileName, const std::string& _fragm
 			glGetShaderInfoLog(fragmentShader, length, NULL, str);
 			std::cerr << "Fragment shader Error " << str << std::endl;
 			delete [] str;
+			std::cout << _vertexFileName;
 			assert(false);
 			return;
 		}
