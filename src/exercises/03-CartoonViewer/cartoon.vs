@@ -3,6 +3,7 @@ uniform mat4 worldcamera;
 uniform mat4 projection;
 
 varying vec3 normal;
+varying vec4 position;
 
 void main()
 {	  
@@ -16,6 +17,7 @@ void main()
 	gl_TexCoord[0]  = gl_MultiTexCoord0;
 	
 	// project the point into the camera
-	gl_Position = projection * vec4( vertex, 1.0 );
+	position = projection * vec4( vertex, 1.0 );
+	gl_Position = position;
 	
 }

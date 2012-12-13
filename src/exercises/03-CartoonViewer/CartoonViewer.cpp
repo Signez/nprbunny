@@ -55,7 +55,7 @@ init()
 	};*/
 
 	//m_cartoonShadingTexture.create(4, 1, GL_RGB, GL_RGB, GL_FLOAT, tex, GL_NEAREST);
-	m_cartoonShadingTexture.create("../../../data/Tex_Strokes.tga");
+	m_cartoonShadingTexture.create("../../../data/earth.tga");
 }
 
 
@@ -205,7 +205,8 @@ drawCartoon() {
 	m_cartoonShadingTexture.setLayer(0);
 	m_cartoonShadingTexture.bind();
 	m_cartoonShader.setIntUniform("texture", m_cartoonShadingTexture.getLayer());
-	glHint(GL_PERSPECTIVE_CORRECTION_HINT,GL_NICEST);
+	m_cartoonShader.setFloatUniform("width",width_);
+	m_cartoonShader.setFloatUniform("height",height_);
 	
 	/*glVertexPointer( 3, GL_DOUBLE, 0, m_mesh.getVertexPointer() );
 	glNormalPointer( GL_DOUBLE, 0, m_mesh.getNormalPointer() );
@@ -223,8 +224,6 @@ drawCartoon() {
 	//if(m_mesh.hasUvTextureCoord())
 		glDisableClientState(GL_TEXTURE_COORD_ARRAY);*/
 
-
-	// I'AM DOING STH WRONG HERE. MY BAD GUYS
 
 	// For each part of the mesh
 	for(unsigned int partMesh = 0; partMesh < m_mesh.getNumberOfParts(); partMesh++)
@@ -276,6 +275,7 @@ drawDepth() {
 	m_depthShader.setFloatUniform("near",m_camera.getNearPlane());
 	m_depthShader.setFloatUniform("far",m_camera.getFarPlane());
 	
+
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_NORMAL_ARRAY);
 	
