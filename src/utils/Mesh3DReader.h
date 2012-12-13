@@ -23,48 +23,48 @@
 #define STRING_DEFAULT "NONE_LGG"
 
 #ifdef WIN32
-#define SSCANF sscanf_s
+  #define SSCANF sscanf_s
 #else
-#define SSCANF sscanf
+  #define SSCANF sscanf
 #endif
 
 namespace
 {
-class VertexMergingData
-{
-public:
-	VertexMergingData() : indexPosition(0), indexNormal(0), indexUV(0) {}
-	unsigned int indexPosition;
-	unsigned int indexNormal;
-	unsigned int indexUV;
-};
-class VertexMergingDataComparison
-{
-public:
-	bool operator()(const VertexMergingData& x, const VertexMergingData& y) const
+	class VertexMergingData
+	{
+	public:
+		VertexMergingData() : indexPosition(0), indexNormal(0), indexUV(0) {}
+		unsigned int indexPosition;
+		unsigned int indexNormal;
+		unsigned int indexUV;
+	};
+	class VertexMergingDataComparison
 	{ 
-		if(x.indexPosition < y.indexPosition)
-			return true;
-		if(x.indexPosition == y.indexPosition && x.indexNormal < y.indexNormal)
-			return true;
-		if(x.indexPosition == y.indexPosition && x.indexNormal == y.indexNormal && x.indexUV < y.indexUV)
-			return true;
-		return false;
-	}
-};
+	public:	
+		bool operator()(const VertexMergingData& x, const VertexMergingData& y) const
+		{ 
+			if(x.indexPosition < y.indexPosition)
+				return true;
+			if(x.indexPosition == y.indexPosition && x.indexNormal < y.indexNormal)
+				return true;
+			if(x.indexPosition == y.indexPosition && x.indexNormal == y.indexNormal && x.indexUV < y.indexUV)
+				return true;
+			return false;
+		} 
+	};
 }
 
 
 class Mesh3DReader 
 {
 
-	class MaterialManager
-	{
+class MaterialManager
+{
 	public:
 		typedef std::map<std::string, unsigned int> MeshMaterialMap;
 		MeshMaterialMap materialsMap;
 		std::vector<MeshMaterial *> materials;
-	};
+};
 public:
 	//-----------------------------------------------------------------------------
 	// Load the obj file as a unique mesh
@@ -77,7 +77,7 @@ public:
 		return parseOBJFile(_filenameOBJ, _mesh, materialManager);
 		//if(!_filenameMTL.empty())
 		//	if(!parseMTLFile(_filenameMTL, materialManager)) return false;
-
+		
 	}
 private:
 	static bool parseMTLFile(const std::string& _filenameMTL, MaterialManager& _materialsManager)
@@ -118,22 +118,22 @@ private:
 			{
 				std::string texturePath;
 				lineStream >> texturePath;
-#ifdef WIN32
+				#ifdef WIN32
 				texturePath = _filenameMTL.substr(0, _filenameMTL.find_last_of("\\")+1) + texturePath;
-#else
+				#else
 				texturePath = _filenameMTL.substr(0, _filenameMTL.find_last_of("/")+1) + texturePath;
-#endif
+				#endif
 				_materialsManager.materials.back()->m_diffuseTexture.create(texturePath);
 			}
 			else if(word == "map_bump")
 			{
 				std::string texturePath;
 				lineStream >> texturePath;
-#ifdef WIN32
-				texturePath = _filenameMTL.substr(0, _filenameMTL.find_last_of("\\")+1) + texturePath;
-#else
-				texturePath = _filenameMTL.substr(0, _filenameMTL.find_last_of("/")+1) + texturePath;
-#endif
+				#ifdef WIN32
+					texturePath = _filenameMTL.substr(0, _filenameMTL.find_last_of("\\")+1) + texturePath;
+				#else
+					texturePath = _filenameMTL.substr(0, _filenameMTL.find_last_of("/")+1) + texturePath;
+				#endif
 				_materialsManager.materials.back()->m_bumpTexture.create(texturePath);
 				_materialsManager.materials.back()->m_bumpTexture.setLayer(1);
 			}
@@ -153,9 +153,9 @@ private:
 		int nId1, nId2, nId3, nId4;
 		int tId1, tId2, tId3, tId4;
 		float v1, v2, v3;
-		unsigned int found1,found2;
+		int found1,found2;
 		std::string _filenameMTL;
-
+				
 		std::vector<Vector3> positions;
 		std::vector<Vector3> normals;
 		std::vector<Vector2> uvs;
@@ -166,8 +166,8 @@ private:
 		std::vector<unsigned int> positionIndices;
 		std::vector<unsigned int> normalIndices;
 		std::vector<unsigned int> uvIndices; 
-
-
+		
+		
 		while(std::getline(myfile, buffer))
 		{
 			std::istringstream lineStream(buffer);
@@ -177,11 +177,11 @@ private:
 			if(word == "mtllib")
 			{
 				lineStream >> _filenameMTL;
-#ifdef WIN32
-				_filenameMTL = _filenameOBJ.substr(0, _filenameOBJ.find_last_of("\\")+1) + _filenameMTL;
-#else
-				_filenameMTL = _filenameOBJ.substr(0, _filenameOBJ.find_last_of("/")+1) + _filenameMTL;
-#endif
+				#ifdef WIN32
+					_filenameMTL = _filenameOBJ.substr(0, _filenameOBJ.find_last_of("\\")+1) + _filenameMTL;
+				#else
+					_filenameMTL = _filenameOBJ.substr(0, _filenameOBJ.find_last_of("/")+1) + _filenameMTL;
+				#endif
 				if(!parseMTLFile(_filenameMTL, _materialManager)) 
 					return false;
 			}
@@ -215,7 +215,7 @@ private:
 			{
 				//face
 				line = buffer;
-				found1 = (unsigned int)line.find("/");
+				found1 = (int)line.find("/");
 				bool quad = false;
 				if(found1 == string::npos)
 				{
@@ -282,7 +282,7 @@ private:
 		assert(normalIndices.empty() || normalIndices.size() == positionIndices.size());
 		assert(uvIndices.empty() || uvIndices.size() == positionIndices.size());
 		myfile.close();
-
+	
 		std::vector<Vector3> positionsMesh;
 		std::vector<Vector3> normalsMesh;
 		std::vector<Vector2> uvsMesh;
@@ -388,10 +388,10 @@ private:
 				i+=4;
 			}
 		}
-
+		
 		///////////////////////////////////////////////////////////////////
 		return true;
-
+		
 	}
 	//---------------------------------------------------------------------
 };
