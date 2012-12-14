@@ -57,7 +57,11 @@ private:
 	void drawEdge();
 	void shakeEdge();
 	void blendCartoonAndEdge();
-	void NormalPosAndUV(unsigned int vertexIndex, float xUV, float yUV);
+	void drawTriangleByTriangle();
+	void NormalPosAndUV(unsigned int x, double xUV, double yUV);
+	Vector2 projectVertex(Vector3 vertex);
+	void updateMeshUV();
+	void drawWholeMesh();
 
 	void renderFullScreenQuad();
 	
