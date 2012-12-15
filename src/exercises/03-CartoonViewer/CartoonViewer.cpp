@@ -55,7 +55,7 @@ init()
 	};*/
 
 	//m_cartoonShadingTexture.create(4, 1, GL_RGB, GL_RGB, GL_FLOAT, tex, GL_NEAREST);
-	m_cartoonShadingTexture.create("../../../data/Tex_Strokes.tga");
+	m_cartoonShadingTexture.create("../../../data/earth.tga");
 }
 
 
@@ -170,7 +170,7 @@ draw_scene(DrawMode _draw_mode)
 //--------------------------------------------------------
 void CartoonViewer::drawWholeMesh()
 {
-	//MAJ des coordonnées UV
+	//Update the UVcoordinates
 	updateMeshUV();
 
 	glEnableClientState(GL_VERTEX_ARRAY);
@@ -202,15 +202,13 @@ void CartoonViewer::updateMeshUV()
 	//clear old TexCoord
 	m_mesh.m_vertexUV.clear();
 
-	for( int j = 0 ; j < m_mesh.getNumberOfVertices(); j+=3)
+	for( int j = 0 ; j < m_mesh.getNumberOfVertices(); j+=1)
 			{
-
 			//Calculate the UV coordinates on screen
 			Vector2 t = projectVertex(m_mesh.getVertexPosition(j));
 
 			//add the uv-Coordinates
 			m_mesh.m_vertexUV.push_back(t);
-
 	}
 }
 
@@ -274,20 +272,27 @@ Vector2 CartoonViewer::projectVertex(Vector3 vertex){
 
 	/* set up some temporary floats for the values we íre going
 	to need to store for texture coordinates */
-	GLdouble t11 ;
-	GLdouble t12 ;
+	double t11 ;
+	double t12 ;
 	GLdouble t13 ;
 
 	/* This command projects the triangle ís coordinate points
 	onto the window ís coordinate system */
-	gluProject(vertex.x , vertex.y , vertex.z , mesh_transform , projectionMatrix , viewport, &t11 , &t12 ,& t13 );
+	//gluProject(vertex.x , vertex.y , vertex.z , mesh_transform , projectionMatrix , viewport, &t11 , &t12 ,& t13 );
+
+	Vector3 ScreenCoor = (m_camera.getProjectionMatrix() * m_camera.getTransformation().Inverse() * m_mesh.getTransformation() )*vertex;
 
 	/* seen as the window isn ít square we need to remedy the
 	stretching a little and so we divide the window
 	coordinates by a factor of the total width and length .
 	*/
-	t11 = t11 / width_ ;
-	t12 = t12 / height_ ;
+	ScreenCoor = 0.5*(Vector3(1.0,1.0,1.0) + ScreenCoor);
+	t11 = ScreenCoor.x;
+	t12 = ScreenCoor.y;
+	//t11 = max( t11, 0.0) ;
+	//t12 = max(t12, 0.0);
+	//if(t11>1 || t12>1)
+		//std::cout <<'(' << t11 << ',' << t12 << ')' << '\n'; //warning: negative means out of screen ... we don't care
 
 	return Vector2(t11, t12);
 
@@ -301,8 +306,8 @@ drawCartoon() {
 
 	// clear screen
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
+	//glEnable(GL_CULL_FACE);
+	//glCullFace(GL_BACK);
 	glClearColor(1,1,1,0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
@@ -321,10 +326,10 @@ drawCartoon() {
 
 
 	//draw the mesh Triangle by Triangle
-	drawTriangleByTriangle();
+	//drawTriangleByTriangle();
 
 	//Draw the entire mesh
-	//drawWholeMesh();
+	drawWholeMesh();
 
 	glDisable(GL_TEXTURE_2D);
 

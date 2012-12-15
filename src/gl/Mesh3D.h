@@ -266,7 +266,7 @@ public:
 
     
 	
-private:
+//private:
 	//!stores position of each vertex in the mesh
 	vector<Vector3> m_vertexPositions;
 						 
