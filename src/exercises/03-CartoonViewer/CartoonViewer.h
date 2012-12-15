@@ -58,7 +58,7 @@ private:
 	void shakeEdge();
 	void blendCartoonAndEdge();
 	void drawTriangleByTriangle(unsigned int vertexIndex);
-	void NormalPosAndUV(unsigned int x, Vector3 normal);
+	void NormalPosAndUV(unsigned int x, Vector3 normal, Vector3 curvature, Vector2 center);
 	Vector2 projectVertex(Vector3 vertex);
 	void updateMeshUV();
 	void drawWholeMesh();
@@ -89,11 +89,16 @@ protected:
 	// blending shader
 	Shader m_blendingShader;
 	
-	// cartoon shading texture
+	// cartoon shading texture (Stroke texture)
 	Texture m_cartoonShadingTexture;
 	
+	//Multipass rendering textures
+	Texture m_firstPassTexture;
+	Texture m_sndPassTexture;
+	Texture m_thirdPassTexture;
+
 	// cartoon output texture
-	Texture m_cartoonOutputTexture;
+	//Texture m_cartoonOutputTexture;
 	
 	// depth texture
 	Texture m_depthTexture;
@@ -103,6 +108,9 @@ protected:
 
 	// shake texture
 	Texture m_shakeEdgeTexture;
+
+	// Paper texture
+	Texture m_paperTexture;
 	
 	
 };

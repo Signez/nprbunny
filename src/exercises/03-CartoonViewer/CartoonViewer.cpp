@@ -56,6 +56,7 @@ init()
 
 	//m_cartoonShadingTexture.create(4, 1, GL_RGB, GL_RGB, GL_FLOAT, tex, GL_NEAREST);
 	m_cartoonShadingTexture.create("../../../data/Tex_Strokes_Smooth.tga");
+	m_paperTexture.create("../../../data/white-parchment-paper-texture.tga");
 }
 
 
@@ -72,17 +73,22 @@ reshape(int _w, int _h)
 	// resize framebuffer and textures
 	m_fbo.create(_w,_h, true);
 
-	m_cartoonOutputTexture.create(_w,_h,GL_RGBA16,GL_RGB,GL_UNSIGNED_INT);
-	// try GL_RGB4, GL_RGB8, GL_RGB10, GL_RGB16 to see effect of edge precision
+	// Initialize textures
+	m_firstPassTexture.create(_w,_h,GL_RGBA16,GL_RGB,GL_UNSIGNED_INT);
+	m_sndPassTexture.create(_w,_h,GL_RGBA16,GL_RGB,GL_UNSIGNED_INT);
+	m_thirdPassTexture.create(_w,_h,GL_RGBA16,GL_RGB,GL_UNSIGNED_INT);
+
 	m_depthTexture.create(_w,_h,GL_RGBA16,GL_RGB,GL_FLOAT);
 	m_edgeTexture.create(_w,_h,GL_RGB,GL_RGB,GL_UNSIGNED_INT);
 	m_shakeEdgeTexture.create(_w,_h,GL_RGB,GL_RGB,GL_UNSIGNED_INT);
 
 	// attach textures to frame buffer
-	m_fbo.attachTexture(GL_COLOR_ATTACHMENT0_EXT, m_cartoonOutputTexture.getID());
-	m_fbo.attachTexture(GL_COLOR_ATTACHMENT1_EXT, m_depthTexture.getID());
-	m_fbo.attachTexture(GL_COLOR_ATTACHMENT2_EXT, m_edgeTexture.getID());
-	m_fbo.attachTexture(GL_COLOR_ATTACHMENT3_EXT, m_shakeEdgeTexture.getID());
+	m_fbo.attachTexture(GL_COLOR_ATTACHMENT0_EXT, m_firstPassTexture.getID());
+	m_fbo.attachTexture(GL_COLOR_ATTACHMENT1_EXT, m_sndPassTexture.getID());
+	m_fbo.attachTexture(GL_COLOR_ATTACHMENT2_EXT, m_thirdPassTexture.getID());
+	m_fbo.attachTexture(GL_COLOR_ATTACHMENT3_EXT, m_depthTexture.getID());
+	m_fbo.attachTexture(GL_COLOR_ATTACHMENT4_EXT, m_edgeTexture.getID());
+	m_fbo.attachTexture(GL_COLOR_ATTACHMENT5_EXT, m_shakeEdgeTexture.getID());
 
 }
 
@@ -144,25 +150,33 @@ draw_scene(DrawMode _draw_mode)
 {
 	// draw cartoon shading
 	m_fbo.bind(GL_COLOR_ATTACHMENT0_EXT);
-	drawCartoon(4);
+	drawCartoon(0);
+	m_fbo.unbind();
+
+	m_fbo.bind(GL_COLOR_ATTACHMENT1_EXT);
+	drawCartoon(1);
+	m_fbo.unbind();
+
+	m_fbo.bind(GL_COLOR_ATTACHMENT2_EXT);
+	drawCartoon(2);
 	m_fbo.unbind();
 
 	// draw depth image
-	m_fbo.bind(GL_COLOR_ATTACHMENT1_EXT);
+	m_fbo.bind(GL_COLOR_ATTACHMENT3_EXT);
 	drawDepth();
 	m_fbo.unbind();
 
 	// calculate edges on depth image
-	m_fbo.bind(GL_COLOR_ATTACHMENT2_EXT);
+	m_fbo.bind(GL_COLOR_ATTACHMENT4_EXT);
 	drawEdge();
 	m_fbo.unbind();
 
 	// shake the edges
-	m_fbo.bind(GL_COLOR_ATTACHMENT3_EXT);
+	m_fbo.bind(GL_COLOR_ATTACHMENT5_EXT);
 	shakeEdge();
 	m_fbo.unbind();
 
-	// blend edges and cartoon shading
+	// blend edges and perform the three way blending
 	blendCartoonAndEdge();
 
 }
@@ -176,6 +190,7 @@ drawCartoon(unsigned int vertexIndex) {
 	glEnable(GL_DEPTH_TEST);
 	//glEnable(GL_CULL_FACE);
 	//glCullFace(GL_FRONT);
+	glShadeModel(GL_SMOOTH);
 	glClearColor(1,1,1,0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -189,9 +204,6 @@ drawCartoon(unsigned int vertexIndex) {
 	m_cartoonShadingTexture.setLayer(0);
 	m_cartoonShadingTexture.bind();
 	m_cartoonShader.setIntUniform("texture", m_cartoonShadingTexture.getLayer());
-	m_cartoonShader.setFloatUniform("width",width_);
-	m_cartoonShader.setFloatUniform("height",height_);
-
 
 	//draw the mesh Triangle by Triangle
 	drawTriangleByTriangle(vertexIndex);
@@ -200,7 +212,7 @@ drawCartoon(unsigned int vertexIndex) {
 	//drawWholeMesh();
 
 	glDisable(GL_TEXTURE_2D);
-	glDisable(GL_CULL_FACE);
+	//glDisable(GL_CULL_FACE);
 
 	m_cartoonShadingTexture.unbind();
 	m_cartoonShader.unbind();
@@ -229,12 +241,15 @@ void CartoonViewer::drawTriangleByTriangle(unsigned int vertexIndex)
 			switch (vertexIndex) {
 			case 0:
 				normal = m_mesh.getVertexNormal(a);
+				curvature = (m_mesh.getVertexNormal(a) - m_mesh.getVertexNormal(b) ).cross( m_mesh.getVertexPosition(b) - m_mesh.getVertexPosition(a) );
 				break;
 			case 1:
 				normal = m_mesh.getVertexNormal(b);
+				curvature = (m_mesh.getVertexNormal(b) - m_mesh.getVertexNormal(c) ).cross( m_mesh.getVertexPosition(c) - m_mesh.getVertexPosition(b) );
 				break;
 			case 2:
 				normal = m_mesh.getVertexNormal(c);
+				curvature = (m_mesh.getVertexNormal(c) - m_mesh.getVertexNormal(a) ).cross( m_mesh.getVertexPosition(a) - m_mesh.getVertexPosition(c) );
 				break;
 
 			default:
@@ -243,12 +258,13 @@ void CartoonViewer::drawTriangleByTriangle(unsigned int vertexIndex)
 				break;
 			}
 
+			Vector2 Coorcenter = ( m_mesh.getUVs()[a] + m_mesh.getUVs()[b] + m_mesh.getUVs()[c] )/3.0;
 
 			//draw the triangle
 			glBegin(GL_TRIANGLES);
-			NormalPosAndUV(a, normal);
-			NormalPosAndUV(b, normal);
-			NormalPosAndUV(c, normal);
+			NormalPosAndUV(a, normal, curvature, Coorcenter);
+			NormalPosAndUV(b, normal, curvature, Coorcenter);
+			NormalPosAndUV(c, normal, curvature, Coorcenter);
 			glEnd();
 		}
 	}
@@ -256,16 +272,19 @@ void CartoonViewer::drawTriangleByTriangle(unsigned int vertexIndex)
 
 //--------------------------------------------------------
 
-void CartoonViewer::NormalPosAndUV(unsigned int x, Vector3 normal)
+void CartoonViewer::NormalPosAndUV(unsigned int x, Vector3 normal, Vector3 curvature, Vector2 center)
 {
 	Vector3 A_normal = m_mesh.getVertexNormal(x);
 	Vector3 A_position = m_mesh.getVertexPosition(x);
 	Vector2 texCoord = m_mesh.getUVs()[x];
 
 	//glNormal3d(A_normal.x, A_normal.y, A_normal.z);
-	//Modif pour normale uniforme dans triangle
+
+	//Modif pour normale et courbure uniforme dans triangle
 	glNormal3d(normal.x, normal.y, normal.z);
-	glTexCoord2d(texCoord.x,texCoord.y);
+	glMultiTexCoord3d(GL_TEXTURE0, texCoord.x, texCoord.y, 0.0);
+	glMultiTexCoord3d(GL_TEXTURE1, curvature.x, curvature.y, curvature.z);
+	glMultiTexCoord2d(GL_TEXTURE2, center.x, center.y);
 	glVertex3d(A_position.x, A_position.y, A_position.z); 
 
 }
@@ -483,18 +502,30 @@ blendCartoonAndEdge() {
 	// clear screen
 	glDisable(GL_DEPTH_TEST);
 
+	// Give the 3 stroke rendering to perform 3 way blending
 	m_blendingShader.bind();
-	m_cartoonOutputTexture.setLayer(0);
-	m_cartoonOutputTexture.bind();
-	m_blendingShader.setIntUniform("texture1",m_cartoonOutputTexture.getLayer());
-	/*m_edgeTexture.setLayer(1);
-	m_edgeTexture.bind();
-	m_blendingShader.setIntUniform("texture2",m_edgeTexture.getLayer());*/
+	m_firstPassTexture.setLayer(0);
+	m_firstPassTexture.bind();
+	m_blendingShader.setIntUniform("texture1",m_firstPassTexture.getLayer());
 
-	m_shakeEdgeTexture.setLayer(1);
+	m_blendingShader.bind();
+	m_sndPassTexture.setLayer(1);
+	m_sndPassTexture.bind();
+	m_blendingShader.setIntUniform("texture2",m_sndPassTexture.getLayer());
+
+	m_blendingShader.bind();
+	m_thirdPassTexture.setLayer(2);
+	m_thirdPassTexture.bind();
+	m_blendingShader.setIntUniform("texture3",m_thirdPassTexture.getLayer());
+
+	m_shakeEdgeTexture.setLayer(3);
 	m_shakeEdgeTexture.bind();
-	m_blendingShader.setIntUniform("texture2",m_shakeEdgeTexture.getLayer());
+	m_blendingShader.setIntUniform("ShakeEdge",m_shakeEdgeTexture.getLayer());
 
+	m_paperTexture.setLayer(4);
+	m_paperTexture.bind();
+	m_blendingShader.setIntUniform("Paper",m_paperTexture.getLayer());
+	
 
 	// render a quad over full image
 	renderFullScreenQuad();
