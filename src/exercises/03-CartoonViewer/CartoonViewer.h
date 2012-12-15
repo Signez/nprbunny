@@ -52,13 +52,13 @@ virtual void reshape(int w, int h);
   virtual void draw_scene(DrawMode _draw_mode);
 
 private:
-	void drawCartoon();
+	void drawCartoon(unsigned int vertexIndex);
 	void drawDepth();
 	void drawEdge();
 	void shakeEdge();
 	void blendCartoonAndEdge();
-	void drawTriangleByTriangle();
-	void NormalPosAndUV(unsigned int x, double xUV, double yUV);
+	void drawTriangleByTriangle(unsigned int vertexIndex);
+	void NormalPosAndUV(unsigned int x, Vector3 normal);
 	Vector2 projectVertex(Vector3 vertex);
 	void updateMeshUV();
 	void drawWholeMesh();

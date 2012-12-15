@@ -55,7 +55,7 @@ init()
 	};*/
 
 	//m_cartoonShadingTexture.create(4, 1, GL_RGB, GL_RGB, GL_FLOAT, tex, GL_NEAREST);
-	m_cartoonShadingTexture.create("../../../data/earth.tga");
+	m_cartoonShadingTexture.create("../../../data/Tex_Strokes_Smooth.tga");
 }
 
 
@@ -144,7 +144,7 @@ draw_scene(DrawMode _draw_mode)
 {
 	// draw cartoon shading
 	m_fbo.bind(GL_COLOR_ATTACHMENT0_EXT);
-	drawCartoon();
+	drawCartoon(4);
 	m_fbo.unbind();
 
 	// draw depth image
@@ -167,56 +167,50 @@ draw_scene(DrawMode _draw_mode)
 
 }
 
+//-----------------------------------------------------------------------------
+void 
+CartoonViewer::
+drawCartoon(unsigned int vertexIndex) {
+
+	// clear screen
+	glEnable(GL_DEPTH_TEST);
+	//glEnable(GL_CULL_FACE);
+	//glCullFace(GL_FRONT);
+	glClearColor(1,1,1,0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	m_cartoonShader.bind(); 
+
+	// set parameters
+	m_cartoonShader.setMatrix4x4Uniform("worldcamera", m_camera.getTransformation().Inverse());
+	m_cartoonShader.setMatrix4x4Uniform("projection", m_camera.getProjectionMatrix());
+	m_cartoonShader.setMatrix4x4Uniform("modelworld", m_mesh.getTransformation() );
+
+	m_cartoonShadingTexture.setLayer(0);
+	m_cartoonShadingTexture.bind();
+	m_cartoonShader.setIntUniform("texture", m_cartoonShadingTexture.getLayer());
+	m_cartoonShader.setFloatUniform("width",width_);
+	m_cartoonShader.setFloatUniform("height",height_);
+
+
+	//draw the mesh Triangle by Triangle
+	drawTriangleByTriangle(vertexIndex);
+
+	//Draw the entire mesh
+	//drawWholeMesh();
+
+	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_CULL_FACE);
+
+	m_cartoonShadingTexture.unbind();
+	m_cartoonShader.unbind();
+}
+
 //--------------------------------------------------------
-void CartoonViewer::drawWholeMesh()
+void CartoonViewer::drawTriangleByTriangle(unsigned int vertexIndex)
 {
 	//Update the UVcoordinates
 	updateMeshUV();
-
-	glEnableClientState(GL_VERTEX_ARRAY);
-		glEnableClientState(GL_NORMAL_ARRAY);
-		//if(m_mesh.hasUvTextureCoord())
-			glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
-	glVertexPointer( 3, GL_DOUBLE, 0, m_mesh.getVertexPointer() );
-		glNormalPointer( GL_DOUBLE, 0, m_mesh.getNormalPointer() );
-		//if(m_mesh.hasUvTextureCoord())
-			glTexCoordPointer( 2, GL_DOUBLE, 0, m_mesh.getUvTextureCoordPointer() );
-
-		for(unsigned int i = 0; i < m_mesh.getNumberOfParts(); i++)
-		{
-			bool hasTexture = m_mesh.hasUvTextureCoord();// m_mesh.getMaterial(i).hasDiffuseTexture();
-			glDrawElements( GL_TRIANGLES, m_mesh.getNumberOfFaces(i)*3, GL_UNSIGNED_INT, m_mesh.getVertexIndicesPointer(i) );
-		}
-
-		glDisableClientState(GL_NORMAL_ARRAY);
-		glDisableClientState(GL_VERTEX_ARRAY);
-		//if(m_mesh.hasUvTextureCoord())
-			glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-
-}
-
-//--------------------------------------------------------
-void CartoonViewer::updateMeshUV()
-{
-	//clear old TexCoord
-	m_mesh.m_vertexUV.clear();
-
-	for( int j = 0 ; j < m_mesh.getNumberOfVertices(); j+=1)
-			{
-			//Calculate the UV coordinates on screen
-			Vector2 t = projectVertex(m_mesh.getVertexPosition(j));
-
-			//add the uv-Coordinates
-			m_mesh.m_vertexUV.push_back(t);
-	}
-}
-
-//--------------------------------------------------------
-void CartoonViewer::drawTriangleByTriangle()
-{
-	//clear old TexCoord
-	//m_mesh.m_vertexUV.clear();
 
 	// For each part of the mesh
 	for(unsigned int partMesh = 0; partMesh < m_mesh.getNumberOfParts(); partMesh++)
@@ -230,21 +224,31 @@ void CartoonViewer::drawTriangleByTriangle()
 			b = m_mesh.getFaceVertexIndex(triangle, 1, partMesh);
 			c = m_mesh.getFaceVertexIndex(triangle, 2, partMesh);
 
-			//Calculate the UV coordinates on screen
-			Vector2 ta = projectVertex(m_mesh.getVertexPosition(a));
-			Vector2 tb = projectVertex(m_mesh.getVertexPosition(b));
-			Vector2 tc = projectVertex(m_mesh.getVertexPosition(c));
-			//double tXmax = max( ta.x, max( tb.x, tc.x ) );
-			//double tXmin = min( ta.x, min( tb.x, tc.x ) );
-			//double tYmax = max( ta.y, max( tb.y, tc.y ) );
-			//double tYmin = min( ta.y, min( tb.y, tc.y ) );
+			Vector3 normal;
+			Vector3 curvature; // We use the curvature in the same way
+			switch (vertexIndex) {
+			case 0:
+				normal = m_mesh.getVertexNormal(a);
+				break;
+			case 1:
+				normal = m_mesh.getVertexNormal(b);
+				break;
+			case 2:
+				normal = m_mesh.getVertexNormal(c);
+				break;
+
+			default:
+				//Take the mean if fails
+				normal = ( m_mesh.getVertexNormal(a) + m_mesh.getVertexNormal(a) + m_mesh.getVertexNormal(a) )/3.0;
+				break;
+			}
 
 
 			//draw the triangle
 			glBegin(GL_TRIANGLES);
-			NormalPosAndUV(a , ta.x, ta.y);
-			NormalPosAndUV(b , tb.x, tb.y);
-			NormalPosAndUV(c , tc.x, tc.y);
+			NormalPosAndUV(a, normal);
+			NormalPosAndUV(b, normal);
+			NormalPosAndUV(c, normal);
 			glEnd();
 		}
 	}
@@ -252,14 +256,34 @@ void CartoonViewer::drawTriangleByTriangle()
 
 //--------------------------------------------------------
 
-void CartoonViewer::NormalPosAndUV(unsigned int x, double xUV, double yUV)
+void CartoonViewer::NormalPosAndUV(unsigned int x, Vector3 normal)
 {
 	Vector3 A_normal = m_mesh.getVertexNormal(x);
 	Vector3 A_position = m_mesh.getVertexPosition(x);
+	Vector2 texCoord = m_mesh.getUVs()[x];
 
+	//glNormal3d(A_normal.x, A_normal.y, A_normal.z);
+	//Modif pour normale uniforme dans triangle
+	glNormal3d(normal.x, normal.y, normal.z);
+	glTexCoord2d(texCoord.x,texCoord.y);
 	glVertex3d(A_position.x, A_position.y, A_position.z); 
-	glNormal3d(A_normal.x, A_normal.y, A_normal.z);
-	glTexCoord2d(xUV,yUV);
+
+}
+
+//--------------------------------------------------------
+void CartoonViewer::updateMeshUV()
+{
+	//clear old TexCoord
+	m_mesh.m_vertexUV.clear();
+
+	for( int j = 0 ; j < m_mesh.getNumberOfVertices(); j+=1)
+	{
+		//Calculate the UV coordinates on screen
+		Vector2 t = projectVertex(m_mesh.getVertexPosition(j));
+
+		//add the uv-Coordinates
+		m_mesh.m_vertexUV.push_back(t);
+	}
 }
 
 //-----------------------------------------------------------------------------
@@ -285,59 +309,67 @@ Vector2 CartoonViewer::projectVertex(Vector3 vertex){
 	/* seen as the window isn ’t square we need to remedy the
 	stretching a little and so we divide the window
 	coordinates by a factor of the total width and length .
-	*/
-	ScreenCoor = 0.5*(Vector3(1.0,1.0,1.0) + ScreenCoor);
+	 */
+	ScreenCoor = 0.5*( Vector3(1.0,1.0,1.0) + ScreenCoor );
 	t11 = ScreenCoor.x;
 	t12 = ScreenCoor.y;
 	//t11 = max( t11, 0.0) ;
 	//t12 = max(t12, 0.0);
 	//if(t11>1 || t12>1)
-		//std::cout <<'(' << t11 << ',' << t12 << ')' << '\n'; //warning: negative means out of screen ... we don't care
+	//std::cout <<'(' << t11 << ',' << t12 << ')' << '\n'; //warning: negative means out of screen ... we don't care
 
 	return Vector2(t11, t12);
 
 }
 
-//-----------------------------------------------------------------------------
+//--------------------------------------------------------
+void CartoonViewer::drawWholeMesh()
+{
+	//Update the UVcoordinates
+	updateMeshUV();
 
-void 
-CartoonViewer::
-drawCartoon() {
+	// setting vertex and Normal array for rendering
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_NORMAL_ARRAY);
+	glVertexPointer( 3, GL_DOUBLE, 0, m_mesh.getVertexPointer() );
+	glNormalPointer( GL_DOUBLE, 0, m_mesh.getNormalPointer() );
 
-	// clear screen
-	glEnable(GL_DEPTH_TEST);
-	//glEnable(GL_CULL_FACE);
-	//glCullFace(GL_BACK);
-	glClearColor(1,1,1,0);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	
-	m_cartoonShader.bind(); 
-	
-	// set parameters
-	m_cartoonShader.setMatrix4x4Uniform("worldcamera", m_camera.getTransformation().Inverse());
-	m_cartoonShader.setMatrix4x4Uniform("projection", m_camera.getProjectionMatrix());
-	m_cartoonShader.setMatrix4x4Uniform("modelworld", m_mesh.getTransformation() );
-	
-	m_cartoonShadingTexture.setLayer(0);
-	m_cartoonShadingTexture.bind();
-	m_cartoonShader.setIntUniform("texture", m_cartoonShadingTexture.getLayer());
-	m_cartoonShader.setFloatUniform("width",width_);
-	m_cartoonShader.setFloatUniform("height",height_);
+	// texture coord 0: Using the calculates UV of the mesh on screen
+	glClientActiveTextureARB(GL_TEXTURE0_ARB); 
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	glTexCoordPointer( 2, GL_DOUBLE, 0, m_mesh.getUvTextureCoordPointer() );
+
+	// texture coord 1: Using the curvature direction as a texture 
+	glClientActiveTextureARB(GL_TEXTURE1_ARB);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	glTexCoordPointer(3, GL_FLOAT, 0, 0);
+
+	// texture coord 2:
+	glClientActiveTextureARB(GL_TEXTURE2_ARB);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	glTexCoordPointer(3, GL_FLOAT, 0, 0);
 
 
-	//draw the mesh Triangle by Triangle
-	//drawTriangleByTriangle();
+	for(unsigned int i = 0; i < m_mesh.getNumberOfParts(); i++)
+	{
+		//bool hasTexture = m_mesh.hasUvTextureCoord(); m_mesh.getMaterial(i).hasDiffuseTexture();
+		glDrawElements( GL_TRIANGLES, m_mesh.getNumberOfFaces(i)*3, GL_UNSIGNED_INT, m_mesh.getVertexIndicesPointer(i) );
+	}
 
-	//Draw the entire mesh
-	drawWholeMesh();
+	glDisableClientState(GL_NORMAL_ARRAY);
+	glDisableClientState(GL_VERTEX_ARRAY);
 
-	glDisable(GL_TEXTURE_2D);
+	// Disable multitex coordinates
+	glClientActiveTextureARB(GL_TEXTURE0_ARB);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
-	m_cartoonShadingTexture.unbind();
-	m_cartoonShader.unbind();
+	glClientActiveTextureARB(GL_TEXTURE1_ARB);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
+	glClientActiveTextureARB(GL_TEXTURE2_ARB);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
 }
-
-
 
 //-----------------------------------------------------------------------------
 void 
