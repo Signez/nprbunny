@@ -278,13 +278,16 @@ void CartoonViewer::NormalPosAndUV(unsigned int x, Vector3 normal, Vector3 curva
 	Vector3 A_position = m_mesh.getVertexPosition(x);
 	Vector2 texCoord = m_mesh.getUVs()[x];
 
-	//glNormal3d(A_normal.x, A_normal.y, A_normal.z);
+
 
 	//Modif pour normale et courbure uniforme dans triangle
-	glNormal3d(normal.x, normal.y, normal.z);
+	//glNormal3d(normal.x, normal.y, normal.z);
+	// Conserver une interpolation
+	A_normal = A_normal + normal;
+	glNormal3d(A_normal.x, A_normal.y, A_normal.z);
 	glMultiTexCoord3d(GL_TEXTURE0, texCoord.x, texCoord.y, 0.0);
 	glMultiTexCoord3d(GL_TEXTURE1, curvature.x, curvature.y, curvature.z);
-	glMultiTexCoord2d(GL_TEXTURE2, center.x, center.y);
+	glMultiTexCoord2d(GL_TEXTURE2, center.x, center.y); //Finalement inutile mais à confirmer ...
 	glVertex3d(A_position.x, A_position.y, A_position.z); 
 
 }
@@ -328,7 +331,7 @@ Vector2 CartoonViewer::projectVertex(Vector3 vertex){
 	/* seen as the window isn ’t square we need to remedy the
 	stretching a little and so we divide the window
 	coordinates by a factor of the total width and length .
-	 */
+	*/
 	ScreenCoor = 0.5*( Vector3(1.0,1.0,1.0) + ScreenCoor );
 	t11 = ScreenCoor.x;
 	t12 = ScreenCoor.y;
@@ -525,7 +528,7 @@ blendCartoonAndEdge() {
 	m_paperTexture.setLayer(4);
 	m_paperTexture.bind();
 	m_blendingShader.setIntUniform("Paper",m_paperTexture.getLayer());
-	
+
 
 	// render a quad over full image
 	renderFullScreenQuad();

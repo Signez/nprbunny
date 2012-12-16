@@ -4,6 +4,7 @@ uniform sampler2D texture3; // the third pass texture
 uniform sampler2D ShakeEdge; // the edge texture
 uniform sampler2D Paper; // the paper texture
 		
+		
 void main()
 {	
 	vec4 color1 = texture2D(texture1, gl_TexCoord[0].xy );

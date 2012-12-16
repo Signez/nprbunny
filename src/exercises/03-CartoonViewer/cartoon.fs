@@ -16,7 +16,7 @@ void main()
 	//float intensity = 0.8;
 	
 	// Get tex coordinates and rotate according to the curavture projection
-	vec2 Coords = gl_TexCoord[0].st;
+	vec2 inCoords = gl_TexCoord[0].st;
 	
 	float angle = -atan(projCurvature.s, projCurvature.t);
 	mat2 rotation = mat2(
@@ -24,14 +24,19 @@ void main()
 		-sin(angle), cos(angle)
 	);
 	
+	//vec2 center = gl_TexCoord[2].st;
+	vec2 center = vec2(0.5, 0.5);
+	inCoords = rotation * (inCoords - center) + center;
 	
-	Coords = rotation * (Coords - gl_TexCoord[2].st) + gl_TexCoord[2].st;
+	vec2 texCoords;
 	
+	// Lower intensity index value
 	float index = (floor( (1.0-intensity) * 15.));
-	Coords.x = Coords.x/4.0 + mod(index, 4.0) / 4.0 ;
-	Coords.y = Coords.y/4.0  + floor(index/4.0) / 4.0;
-
-	vec3 color = texture2D(texture, Coords).xyz;
+	texCoords.x = inCoords.x/4.0 + mod(index, 4.0) / 4.0 ;
+	texCoords.y = inCoords.y/4.0  + floor(index/4.0) / 4.0;
+	
+	float tun = 1.0;
+	vec3 color = texture2D(texture, texCoords).xyz * tun + (1-tun) * (intensity);
 
 	gl_FragColor = vec4(color, 1.0);
 	
