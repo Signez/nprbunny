@@ -16,8 +16,6 @@ void main()
 	
 	// get texture coordinate
 	gl_TexCoord[0]  = gl_MultiTexCoord0;
-	
-	
 	gl_TexCoord[1]  = gl_MultiTexCoord1; //curvature direction
 	gl_TexCoord[2]  = gl_MultiTexCoord2;
 	
@@ -26,5 +24,4 @@ void main()
 	
 	// project the point into the camera
 	gl_Position = projection * vec4( vertex, 1.0 );
-	
 }

@@ -55,6 +55,7 @@ init()
 	};*/
 
 	//m_cartoonShadingTexture.create(4, 1, GL_RGB, GL_RGB, GL_FLOAT, tex, GL_NEAREST);
+
 	m_cartoonShadingTexture.create("../../../data/Tex_Strokes_Smooth.tga");
 	m_paperTexture.create("../../../data/white-parchment-paper-texture.tga");
 }
@@ -283,11 +284,11 @@ void CartoonViewer::NormalPosAndUV(unsigned int x, Vector3 normal, Vector3 curva
 	//Modif pour normale et courbure uniforme dans triangle
 	//glNormal3d(normal.x, normal.y, normal.z);
 	// Conserver une interpolation
-	A_normal = A_normal + normal;
+	A_normal = A_normal + normal / 2;
 	glNormal3d(A_normal.x, A_normal.y, A_normal.z);
 	glMultiTexCoord3d(GL_TEXTURE0, texCoord.x, texCoord.y, 0.0);
 	glMultiTexCoord3d(GL_TEXTURE1, curvature.x, curvature.y, curvature.z);
-	glMultiTexCoord2d(GL_TEXTURE2, center.x, center.y); //Finalement inutile mais à confirmer ...
+	glMultiTexCoord2d(GL_TEXTURE2, center.x, center.y); //Finalement inutile mais ï¿½ confirmer ...
 	glVertex3d(A_position.x, A_position.y, A_position.z); 
 
 }
@@ -311,24 +312,24 @@ void CartoonViewer::updateMeshUV()
 //-----------------------------------------------------------------------------
 
 Vector2 CartoonViewer::projectVertex(Vector3 vertex){
-	double *mesh_transform = ( m_camera.getTransformation().Inverse() * m_mesh.getTransformation() ).matToArray();
-	double *projectionMatrix = m_camera.getProjectionMatrix().matToArray();
-	GLint viewport[4];
-	glGetIntegerv( GL_VIEWPORT , viewport );
+	//double *mesh_transform = ( m_camera.getTransformation().Inverse() * m_mesh.getTransformation() ).matToArray();
+	//double *projectionMatrix = m_camera.getProjectionMatrix().matToArray();
+	//GLint viewport[4];
+	//glGetIntegerv( GL_VIEWPORT , viewport );
 
-	/* set up some temporary floats for the values we ’re going
+	/* set up some temporary floats for the values we ï¿½re going
 	to need to store for texture coordinates */
 	double t11 ;
 	double t12 ;
-	GLdouble t13 ;
+	//GLdouble t13 ;
 
-	/* This command projects the triangle ’s coordinate points
-	onto the window ’s coordinate system */
+	/* This command projects the triangle ï¿½s coordinate points
+	onto the window ï¿½s coordinate system */
 	//gluProject(vertex.x , vertex.y , vertex.z , mesh_transform , projectionMatrix , viewport, &t11 , &t12 ,& t13 );
 
 	Vector3 ScreenCoor = (m_camera.getProjectionMatrix() * m_camera.getTransformation().Inverse() * m_mesh.getTransformation() )*vertex;
 
-	/* seen as the window isn ’t square we need to remedy the
+	/* seen as the window isn ï¿½t square we need to remedy the
 	stretching a little and so we divide the window
 	coordinates by a factor of the total width and length .
 	*/

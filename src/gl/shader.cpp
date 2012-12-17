@@ -107,10 +107,10 @@ void Shader::create(const std::string _vertexFileName, const std::string& _fragm
 			glGetShaderiv(fragmentShader, GL_INFO_LOG_LENGTH, &length);
 			char *str = new char[length];
 			glGetShaderInfoLog(fragmentShader, length, NULL, str);
-			std::cerr << "Fragment shader Error " << str << std::endl;
+			std::cerr << "E: Could not compile GLSL vertex shader '" << _fragmentFileName << "' : " << std::endl
+					  << str << std::endl;
 			delete [] str;
-			std::cout << _vertexFileName;
-			assert(false);
+			assert(compiled);
 			return;
 		}
 	}

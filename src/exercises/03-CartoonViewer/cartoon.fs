@@ -36,7 +36,7 @@ void main()
 	texCoords.y = inCoords.y/4.0  + floor(index/4.0) / 4.0;
 	
 	float tun = 1.0;
-	vec3 color = texture2D(texture, texCoords).xyz * tun + (1-tun) * (intensity);
+	vec3 color = texture2D(texture, texCoords).xyz * tun + (1.0-tun) * (intensity);
 
 	gl_FragColor = vec4(color, 1.0);
 	
