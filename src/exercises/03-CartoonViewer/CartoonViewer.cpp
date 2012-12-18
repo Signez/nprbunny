@@ -56,7 +56,8 @@ init()
 
 	//m_cartoonShadingTexture.create(4, 1, GL_RGB, GL_RGB, GL_FLOAT, tex, GL_NEAREST);
 
-	m_cartoonShadingTexture.create("../../../data/Tex_Strokes_Smooth.tga");
+	m_cartoonShadingTexture.create("../../../data/textures/brush_", ".png", 16);
+	//m_cartoonShadingTexture.create("../../../data/textures/white-parchment-paper-texture.tga");
 	m_paperTexture.create("../../../data/white-parchment-paper-texture.tga");
 }
 
@@ -204,7 +205,7 @@ drawCartoon(unsigned int vertexIndex) {
 
 	m_cartoonShadingTexture.setLayer(0);
 	m_cartoonShadingTexture.bind();
-	m_cartoonShader.setIntUniform("texture", m_cartoonShadingTexture.getLayer());
+	m_cartoonShader.setIntUniform("brushes", m_cartoonShadingTexture.getLayer());
 
 	//draw the mesh Triangle by Triangle
 	drawTriangleByTriangle(vertexIndex);
@@ -212,7 +213,7 @@ drawCartoon(unsigned int vertexIndex) {
 	//Draw the entire mesh
 	//drawWholeMesh();
 
-	glDisable(GL_TEXTURE_2D);
+	//glDisable(GL_TEXTURE_2D);
 	//glDisable(GL_CULL_FACE);
 
 	m_cartoonShadingTexture.unbind();
@@ -299,10 +300,12 @@ void CartoonViewer::updateMeshUV()
 	//clear old TexCoord
 	m_mesh.m_vertexUV.clear();
 
+	Matrix4 TransScreenCoor = (m_camera.getProjectionMatrix() * m_camera.getTransformation().Inverse() * m_mesh.getTransformation() );
+
 	for( int j = 0 ; j < m_mesh.getNumberOfVertices(); j+=1)
 	{
 		//Calculate the UV coordinates on screen
-		Vector2 t = projectVertex(m_mesh.getVertexPosition(j));
+		Vector2 t = projectVertex(m_mesh.getVertexPosition(j), TransScreenCoor);
 
 		//add the uv-Coordinates
 		m_mesh.m_vertexUV.push_back(t);
@@ -311,7 +314,7 @@ void CartoonViewer::updateMeshUV()
 
 //-----------------------------------------------------------------------------
 
-Vector2 CartoonViewer::projectVertex(Vector3 vertex){
+Vector2 CartoonViewer::projectVertex(Vector3 vertex, const Matrix4 &transScreenCoor){
 	//double *mesh_transform = ( m_camera.getTransformation().Inverse() * m_mesh.getTransformation() ).matToArray();
 	//double *projectionMatrix = m_camera.getProjectionMatrix().matToArray();
 	//GLint viewport[4];
@@ -325,21 +328,18 @@ Vector2 CartoonViewer::projectVertex(Vector3 vertex){
 
 	/* This command projects the triangle �s coordinate points
 	onto the window �s coordinate system */
-	//gluProject(vertex.x , vertex.y , vertex.z , mesh_transform , projectionMatrix , viewport, &t11 , &t12 ,& t13 );
 
-	Vector3 ScreenCoor = (m_camera.getProjectionMatrix() * m_camera.getTransformation().Inverse() * m_mesh.getTransformation() )*vertex;
+	Vector3 ScreenCoor = transScreenCoor*vertex;
 
-	/* seen as the window isn �t square we need to remedy the
+	/* seen as the window isn't square we need to remedy the
 	stretching a little and so we divide the window
 	coordinates by a factor of the total width and length .
 	*/
 	ScreenCoor = 0.5*( Vector3(1.0,1.0,1.0) + ScreenCoor );
 	t11 = ScreenCoor.x;
 	t12 = ScreenCoor.y;
-	//t11 = max( t11, 0.0) ;
-	//t12 = max(t12, 0.0);
-	//if(t11>1 || t12>1)
-	//std::cout <<'(' << t11 << ',' << t12 << ')' << '\n'; //warning: negative means out of screen ... we don't care
+	t11 = max(t11, 0.0);
+	t12 = max(t12, 0.0);
 
 	return Vector2(t11, t12);
 

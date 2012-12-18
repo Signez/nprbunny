@@ -1,3 +1,5 @@
+#version 130
+
 varying float depth;
 varying vec3 normal;
 		

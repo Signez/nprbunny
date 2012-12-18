@@ -1,21 +1,17 @@
-//=============================================================================
-//                                                                            
-//   Exercise code for Introduction to Computer Graphics
-//   LGG - EPFL
-//                                                                            
-//=============================================================================
-//=============================================================================
-//
-//   CLASS Texture
-//
-//=============================================================================
+/**
+ * Simple texture class definition.
+ *
+ * Based on EPFL "Introduction to Computer Graphics" framework, cleaned
+ * and improved by authors:
+ *
+ * Erwan Lucas,
+ * Stanislas Signoud,
+ * Joachim Joyaux.
+ */
 #ifndef __TEXTURE_H__
 #define __TEXTURE_H__
 #include <string>
 #include "gl.h"
-
-
-
 
 class Texture 
 {
@@ -34,25 +30,25 @@ public:
 				unsigned int _type,
 				void * _data = NULL,
 				int _param = GL_LINEAR);
-	// Read RGB TGA file
+
+	/**
+	 * Create texture from a file supported by FreeImage.
+	 */
 	void create(const std::string& _fileName);
-	// Write the texture in a RGB TGA file
-	void write(const std::string& _fileName) const;
+
+	void setLayer(unsigned int layer_);
+	unsigned int getLayer();
 
 	void bind() const;
 	void unbind() const;
-	
-	//Multi Texturing: channel of this texture
-	void setLayer(unsigned int _layer);
-	unsigned int getLayer() const;
 	
 	//Id of this texture
 	unsigned int getID() const;
 private:
 	void clear();
 	unsigned int id_;
-	unsigned int layer_;
 	unsigned int width_;
 	unsigned int height_;
+	unsigned int layer_;
 };
 #endif

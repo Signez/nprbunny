@@ -1,3 +1,5 @@
+#version 130
+
 uniform mat4 modelworld;
 uniform mat4 worldcamera;
 uniform mat4 projection;

@@ -1,3 +1,5 @@
+#version 130
+
 uniform sampler2D texture1; // the first pass texture
 uniform sampler2D texture2; // the second pass texture
 uniform sampler2D texture3; // the third pass texture

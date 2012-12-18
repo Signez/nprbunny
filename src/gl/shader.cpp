@@ -227,7 +227,7 @@ int Shader::getUniformLocation(const std::string& _name) const
 {
 	assert(programObj_ != 0);
 	int loc = glGetUniformLocation(programObj_, _name.c_str());
-	if(loc == -1) printf("No uniform %s\n", _name.c_str());
+	if(loc == -1) printf("W: No uniform '%s' found.\n", _name.c_str());
 	//assert(loc != -1);
 	return loc;
 }

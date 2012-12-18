@@ -12,7 +12,7 @@ int main(int argc, char **argv)
 {
 	glutInit(&argc, argv);
 	
-	CartoonViewer window("Cartoon Viewer", 800, 800);
+	CartoonViewer window("NPR Viewer", 800, 800);
 	
 	if(argc == 2)
 		window.loadMesh(argv[1]);

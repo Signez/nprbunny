@@ -23,6 +23,7 @@
 #include "../../gl/Mesh3D.h"
 #include "../../gl/Light3D.h"
 #include "../../gl/texture.h"
+#include "../../gl/TextureArray.h"
 #include "../../gl/fbo.h"
 
 
@@ -59,7 +60,7 @@ private:
 	void blendCartoonAndEdge();
 	void drawTriangleByTriangle(unsigned int vertexIndex);
 	void NormalPosAndUV(unsigned int x, Vector3 normal, Vector3 curvature, Vector2 center);
-	Vector2 projectVertex(Vector3 vertex);
+	Vector2 projectVertex(Vector3 vertex, const Matrix4& transScreenCoor);
 	void updateMeshUV();
 	void drawWholeMesh();
 
@@ -89,8 +90,8 @@ protected:
 	// blending shader
 	Shader m_blendingShader;
 	
-	// cartoon shading texture (Stroke texture)
-	Texture m_cartoonShadingTexture;
+	// cartoon shading array texture (stroke textures)
+	TextureArray m_cartoonShadingTexture;
 	
 	//Multipass rendering textures
 	Texture m_firstPassTexture;

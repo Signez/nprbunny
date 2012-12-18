@@ -1,3 +1,5 @@
+#version 130
+
 uniform sampler2D texture; //the depth texture that need to be post processed with the sobel operator
 
 uniform float dx; //use this uniform to move 1 pixel in x
