@@ -153,7 +153,7 @@ private:
 		int nId1, nId2, nId3, nId4;
 		int tId1, tId2, tId3, tId4;
 		float v1, v2, v3;
-		unsigned int found1,found2;
+		int found1,found2;
 		std::string _filenameMTL;
 				
 		std::vector<Vector3> positions;
@@ -309,8 +309,11 @@ private:
 				indicesMesh[i] = (unsigned int)positionsMesh.size();
 				vertexMergingMap[vmd] = (unsigned int)positionsMesh.size();
 				positionsMesh.push_back(positions[positionIndices[i]]);
-				if(!normalIndices.empty()) normalsMesh.push_back(normals[normalIndices[i]]);
-				if(!uvIndices.empty()) uvsMesh.push_back(uvs[uvIndices[i]]);
+
+				if(!normalIndices.empty())
+					normalsMesh.push_back(normals[normalIndices[i]]);
+				if(!uvIndices.empty())
+					uvsMesh.push_back(uvs[uvIndices[i]]);
 			}
 		}
 		assert(!positionsMesh.empty());
