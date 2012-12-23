@@ -1,13 +1,13 @@
-//=============================================================================
-//                                                                            
-//   Exercise code for the lecture
-//                                                                            
-//=============================================================================
-//=============================================================================
-//
-//  CLASS MeshReader
-//
-//=============================================================================
+/**
+ * Mesh3DReader class implementation.
+ *
+ * Based on EPFL "Introduction to Computer Graphics" framework, cleaned
+ * and improved by authors:
+ *
+ * Erwan Lucas,
+ * Stanislas Signoud,
+ * Joachim Joyaux.
+ */
 
 #ifndef MESHREADER_HH
 #define MESHREADER_HH

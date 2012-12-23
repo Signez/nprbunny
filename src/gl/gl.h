@@ -1,12 +1,13 @@
-//=============================================================================
-//                                                                            
-//   Exercise code for the lecture
-//   "Geometric Modeling Based on Polygonal Meshes"
-//   by Prof. Dr. Mario Botsch, Bielefeld University
-//
-//   Copyright (C) 2008  Computer Graphics Group, Bielefeld University.
-//                                                                            
-//=============================================================================
+/**
+ * OpenGL includes.
+ *
+ * Based on EPFL "Introduction to Computer Graphics" framework, cleaned
+ * and improved by authors:
+ *
+ * Erwan Lucas,
+ * Stanislas Signoud,
+ * Joachim Joyaux.
+ */
 
 #ifndef GL_WRAPPERS_HH
 #define GL_WRAPPERS_HH
@@ -42,21 +43,6 @@
 #endif
 
 #define STRIP_CODE_
-
-
-//-----------------------------------------------------------------------------
-
-
-// Nice wrapper that outputs all current OpenGL errors to std::cerr.
-// inline void glCheckErrors()
-// {
-//   GLenum error;
-//   while ((error = glGetError()) != GL_NO_ERROR)
-//   {
-//     std::cerr << "GL error: " << gluErrorString(error) << std::endl;
-//   }
-// }
-
 
 //=============================================================================
 #endif // GL_WRAPPERS_HH defined

@@ -1,15 +1,13 @@
-//=============================================================================
-//                                                                            
-//   Exercise code for Introduction to Computer Graphics
-//   LGG - EPFL
-//   Duygu Ceylan
-//                                                                            
-//=============================================================================
-//=============================================================================
-//
-//   CLASS Mesh3D - IMPLEMENTATION
-//
-//=============================================================================
+/**
+ * Mesh3D class implementation.
+ *
+ * Based on EPFL "Introduction to Computer Graphics" framework (specially
+ * Duygu Ceylan for this file), cleaned and improved by authors:
+ *
+ * Erwan Lucas,
+ * Stanislas Signoud,
+ * Joachim Joyaux.
+ */
 
 #include <assert.h>
 #include "Mesh3D.h"

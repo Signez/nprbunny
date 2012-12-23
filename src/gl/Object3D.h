@@ -1,16 +1,13 @@
-//=============================================================================
-//                                                                            
-//   Exercise code for Introduction to Computer Graphics
-//   LGG - EPFL
-//   Thibaut Weise, Yuliy Schwartzburg
-//                                                                            
-//=============================================================================
-//=============================================================================
-//
-//   CLASS Object3D
-//
-//=============================================================================
-
+/**
+ * Object3D class with implementation.
+ *
+ * Based on EPFL "Introduction to Computer Graphics" framework (specially
+ * Thibaut Weise, Yuliy Schwartzburg here), cleaned and improved by authors:
+ *
+ * Erwan Lucas,
+ * Stanislas Signoud,
+ * Joachim Joyaux.
+ */
 
 #ifndef OBJECT3D_HH
 #define OBJECT3D_HH

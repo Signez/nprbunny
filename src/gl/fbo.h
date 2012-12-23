@@ -1,14 +1,13 @@
-//=============================================================================
-//                                                                            
-//   Exercise code for Introduction to Computer Graphics
-//   LGG - EPFL
-//                                                                            
-//=============================================================================
-//=============================================================================
-//
-//   CLASS FrameBufferObject
-//
-//=============================================================================
+/**
+ * FrameBufferObject class.
+ *
+ * Based on EPFL "Introduction to Computer Graphics" framework, cleaned
+ * and improved by authors:
+ *
+ * Erwan Lucas,
+ * Stanislas Signoud,
+ * Joachim Joyaux.
+ */
 #ifndef __FBO_H__
 #define __FBO_H__
 class FrameBufferObject

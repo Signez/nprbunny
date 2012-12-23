@@ -1,14 +1,13 @@
-//=============================================================================
-//                                                                            
-//   Exercise code for Introduction to Computer Graphics
-//   LGG - EPFL
-//                                                                            
-//=============================================================================
-//=============================================================================
-//
-//   CLASS Shader
-//
-//=============================================================================
+/**
+ * Shader class.
+ *
+ * Based on EPFL "Introduction to Computer Graphics" framework, cleaned
+ * and improved by authors:
+ *
+ * Erwan Lucas,
+ * Stanislas Signoud,
+ * Joachim Joyaux.
+ */
 #ifndef __SHADER_H__
 #define __SHADER_H__
 #include <string>
@@ -23,9 +22,7 @@ class Shader
 		void create(const std::string _vertexFileName, const std::string& _fragmentFileName);
 		void bind() const;
 		void unbind() const;
-		//Set uniform of this shader (be careful if the uniform is not used
-		//in the shader the compiler will remove it, then when you will try
-		//to set it an assert will occur!!!)
+
 		void setFloatUniform(const std::string& _name, float _f) const;
 		void setIntUniform(const std::string& _name, int _f) const;
 		void setVector2Uniform(const std::string& _name, float _v1, float _v2) const;

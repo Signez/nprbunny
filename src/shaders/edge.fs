@@ -42,9 +42,4 @@ void main()
 	M = 1. - 10. * M;
 	
     gl_FragColor = vec4(M, M, M, 1.);
-				    	
-	/* gl_FragColor = texture2D(texture, gl_TexCoord[0].xy); */
-		
-	//texture2D(texture, gl_TexCoord[0].xy);
-	
 }

@@ -1,14 +1,14 @@
-//=============================================================================
-//                                                                            
-//   Exercise code for Introduction to Computer Graphics
-//   LGG - EPFL
-//                                                                            
-//=============================================================================
-//=============================================================================
-//
-//   CLASS FrameBufferObject - IMPLEMENTATION
-//
-//=============================================================================
+/**
+ * FrameBufferObject class implementation.
+ *
+ * Based on EPFL "Introduction to Computer Graphics" framework, cleaned
+ * and improved by authors:
+ *
+ * Erwan Lucas,
+ * Stanislas Signoud,
+ * Joachim Joyaux.
+ */
+
 #include "fbo.h"
 #include "gl.h"
 #include <cassert>

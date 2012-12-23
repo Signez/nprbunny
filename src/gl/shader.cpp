@@ -1,14 +1,13 @@
-//=============================================================================
-//                                                                            
-//   Exercise code for Introduction to Computer Graphics
-//   LGG - EPFL
-//                                                                            
-//=============================================================================
-//=============================================================================
-//
-//   CLASS Shader - IMPLEMENTATION
-//
-//=============================================================================
+/**
+ * Shader class implementation.
+ *
+ * Based on EPFL "Introduction to Computer Graphics" framework, cleaned
+ * and improved by authors:
+ *
+ * Erwan Lucas,
+ * Stanislas Signoud,
+ * Joachim Joyaux.
+ */
 #include "shader.h"
 #include "gl.h"
 #include <cassert>

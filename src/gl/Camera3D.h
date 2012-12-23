@@ -1,15 +1,13 @@
-//=============================================================================
-//                                                                            
-//   Exercise code for Introduction to Computer Graphics
-//   LGG - EPFL
-//   Thibaut Weise, Yuliy Schwartzburg
-//                                                                            
-//=============================================================================
-//=============================================================================
-//
-//   CLASS Camera3D
-//
-//=============================================================================
+/**
+ * Camera3D class.
+ *
+ * Based on EPFL "Introduction to Computer Graphics" framework, cleaned
+ * and improved by authors:
+ *
+ * Erwan Lucas,
+ * Stanislas Signoud,
+ * Joachim Joyaux.
+ */
 
 
 #ifndef CAMERA3D_HH

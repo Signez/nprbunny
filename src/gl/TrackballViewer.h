@@ -1,17 +1,13 @@
-//=============================================================================
-//                                                                            
-//   Exercise code for the lecture
-//   "Geometric Modeling Based on Polygonal Meshes"
-//   by Prof. Dr. Mario Botsch, Bielefeld University
-//
-//   Copyright (C) 2008  Computer Graphics Group, Bielefeld University.
-//                                                                            
-//=============================================================================
-//=============================================================================
-//
-//  CLASS TrackballViewer
-//
-//=============================================================================
+/**
+ * TrackballViewer class.
+ *
+ * Based on EPFL "Introduction to Computer Graphics" framework, cleaned
+ * and improved by authors:
+ *
+ * Erwan Lucas,
+ * Stanislas Signoud,
+ * Joachim Joyaux.
+ */
 
 
 #ifndef TRACKBALL_VIEWER_HH

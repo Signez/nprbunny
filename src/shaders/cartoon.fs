@@ -29,7 +29,6 @@ void main()
 	vec2 center = vec2(0.5, 0.5);
 	inCoords = rotation * (inCoords - center) + center;
 	
-	// Previously : floor( (1.0-intensity) * 16.)
 	vec4 color = texture(brushes, vec3(inCoords.xy, floor( (intensity) * 16.)).xyz); 
 
 	gl_FragColor = color; // vec4(inCoords, floor((1.0-intensity) * 15.) / 15., 0.);

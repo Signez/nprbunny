@@ -1,15 +1,13 @@
-//=============================================================================
-//                                                                            
-//   Exercise code for Introduction to Computer Graphics
-//   LGG - EPFL
-//   Duygu Ceylan
-//                                                                            
-//=============================================================================
-//=============================================================================
-//
-//   CLASS Mesh3D
-//
-//=============================================================================
+/**
+ * Mesh3D class.
+ *
+ * Based on EPFL "Introduction to Computer Graphics" framework (specially
+ * Duygu Ceylan for this file), cleaned and improved by authors:
+ *
+ * Erwan Lucas,
+ * Stanislas Signoud,
+ * Joachim Joyaux.
+ */
 
 #ifndef MESH3D_HH
 #define MESH3D_HH

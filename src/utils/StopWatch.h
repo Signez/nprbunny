@@ -1,17 +1,13 @@
-//=============================================================================
-//                                                                            
-//   Exercise code for the lecture
-//   "Scientific Computing"
-//   by Prof. Dr. Mario Botsch, Bielefeld University
-//
-//   Copyright (C) 2009  Computer Graphics Group, Bielefeld University.
-//                                                                            
-//=============================================================================
-//=============================================================================
-//
-//  CLASS StopWatch
-//
-//=============================================================================
+/**
+ * StopWatch class implementation.
+ *
+ * Based on EPFL "Introduction to Computer Graphics" framework, cleaned
+ * and improved by authors:
+ *
+ * Erwan Lucas,
+ * Stanislas Signoud,
+ * Joachim Joyaux.
+ */
 
 #ifndef STOPWATCH_HH
 #define STOPWATCH_HH
