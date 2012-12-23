@@ -137,6 +137,11 @@ void
 NprViewer::
 draw_scene(DrawMode _draw_mode)
 {
+
+	//Update the UVcoordinates
+	updateMeshUV();
+
+
 	// draw cartoon shading
 	m_fbo.bind(GL_COLOR_ATTACHMENT0_EXT);
 	drawCartoon(0);
@@ -210,8 +215,6 @@ drawCartoon(unsigned int vertexIndex) {
 //--------------------------------------------------------
 void NprViewer::drawTriangleByTriangle(unsigned int vertexIndex)
 {
-	//Update the UVcoordinates
-	updateMeshUV();
 
 	// For each part of the mesh
 	for(unsigned int partMesh = 0; partMesh < m_mesh.getNumberOfParts(); partMesh++)
@@ -321,7 +324,7 @@ Vector2 NprViewer::projectVertex(Vector3 vertex, const Matrix4 &transScreenCoor)
 	/* seen as the window isn't square we need to remedy the
 	stretching a little and so we divide the window
 	coordinates by a factor of the total width and length .
-	*/
+	 */
 	ScreenCoor = 0.5*( Vector3(1.0,1.0,1.0) + ScreenCoor );
 	t11 = ScreenCoor.x;
 	t12 = ScreenCoor.y;
