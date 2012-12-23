@@ -45,20 +45,9 @@ init()
 	m_shakingShader.create("shaking.vs", "shaking.fs");
 	m_blendingShader.create("blending.vs","blending.fs");
 
-	// setup 1D color texture with 4 colors
-	/*float  tex[12] =
-	{
-	0.2, 0.2, 0.2,
-	0.4, 0.4, 0.4,
-	0.6, 0.6, 0.6,
-	0.8, 0.8, 0.8
-	};*/
-
-	//m_cartoonShadingTexture.create(4, 1, GL_RGB, GL_RGB, GL_FLOAT, tex, GL_NEAREST);
-
+	// load textures
 	m_cartoonShadingTexture.create("../../../data/textures/brush_", ".png", 16);
-	//m_cartoonShadingTexture.create("../../../data/textures/white-parchment-paper-texture.tga");
-	m_paperTexture.create("../../../data/white-parchment-paper-texture.tga");
+	m_paperTexture.create("../../../data/textures/white-parchment-paper-texture.jpg");
 }
 
 
@@ -116,8 +105,6 @@ loadMesh(const std::string& filenameOBJ, const std::string& filenameMTL)
 	Vector3 center = 0.5*(bbmin + bbmax);
 
 	set_scene_pos(center, radius);
-
-
 }
 
 
