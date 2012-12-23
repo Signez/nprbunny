@@ -4,3 +4,5 @@
 Default
 *.dll
 .DS_Store
+*.glc
+*.mp4
