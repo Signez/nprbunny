@@ -62,10 +62,6 @@ protected: //------------------------------------------------ protected methods
   virtual void special(int key, int x, int y){}
   
   virtual void keyboard(int key, int x, int y);
-  virtual void processmenu(int i);
-  virtual void create_popup_menu();
-
-  void clear_popup_menu();
 
   //virtual void draw_scene(DrawMode _draw_mode);
   
@@ -89,7 +85,6 @@ private: //---------------------------------------------------- private methods
   static void reshape__(int w, int h); 
   static void special__(int key, int x, int y);   
   static void visibility__(int visible);
-  static void processmenu__(int i);
 	
 
 private: //------------------------------------------------------- private data

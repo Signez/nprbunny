@@ -38,7 +38,6 @@ void Shader::create(const std::string _vertexFileName, const std::string& _fragm
 	unsigned int vertexShader;
 	std::ifstream fileVs;
 	fileVs.open(_vertexFileName.c_str(), std::ios::binary);
-	assert(fileVs.is_open());
 	if(fileVs.is_open())
 	{  
 		fileVs.seekg(0, std::ios::end);    
@@ -64,7 +63,8 @@ void Shader::create(const std::string _vertexFileName, const std::string& _fragm
 			glGetShaderiv(vertexShader, GL_INFO_LOG_LENGTH, &length);
 			char *str = new char[length];
 			glGetShaderInfoLog(vertexShader, length, NULL, str);
-			std::cerr << "Vertex shader error " << str << std::endl;
+			std::cerr << "E: Could not compile GLSL vertex shader '" << _vertexFileName << "' : " << std::endl
+					  << str << std::endl;
 			delete [] str;
 			assert(false);
 			return;
@@ -72,8 +72,8 @@ void Shader::create(const std::string _vertexFileName, const std::string& _fragm
 	}
 	else
 	{
-		std::cerr << "Didn't succeed to open the vertex shader file!" << std::endl;
-		assert(false);
+		std::cerr << "E: Couldn't open vertex shader file '" << _vertexFileName << "'." << std::endl;
+		assert(fileVs.is_open());
 		return;
 	}
 
@@ -81,7 +81,6 @@ void Shader::create(const std::string _vertexFileName, const std::string& _fragm
 	unsigned int fragmentShader;
 	std::ifstream fileFs;
 	fileFs.open(_fragmentFileName.c_str(), std::ios::binary);
-	assert(fileFs.is_open());
 	if(fileFs.is_open())
 	{  
 		fileFs.seekg(0, std::ios::end);    
@@ -116,8 +115,8 @@ void Shader::create(const std::string _vertexFileName, const std::string& _fragm
 	}
 	else
 	{
-		std::cerr << "Didn't succeed to open the fragment shader file!" << std::endl;
-		assert(false);
+		std::cerr << "E: Couldn't open fragment shader file '" << _fragmentFileName << "'." << std::endl;
+		assert(fileFs.is_open());
 		return;
 	}
 
@@ -139,7 +138,7 @@ void Shader::create(const std::string _vertexFileName, const std::string& _fragm
 		glGetProgramiv(programObj_, GL_INFO_LOG_LENGTH, &length);
 		char *str = new char[length];
 		glGetProgramInfoLog(programObj_, length, NULL, str);
-		std::cerr << "Linker error " << str << std::endl;
+		std::cerr << "E: Linker error :" << std::endl << str << std::endl;
 		delete [] str;
 		clear();
 		assert(false);

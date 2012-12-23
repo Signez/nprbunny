@@ -29,7 +29,8 @@ std::map<int, GlutViewer*>  GlutViewer::windows__;
 
 GlutViewer::
 GlutViewer(const char* _title, int _width, int _height)
-  : width_(_width), height_(_height), draw_mode_(SOLID_SMOOTH), fullscreen_(false) 
+  : width_(_width), height_(_height), draw_mode_(SOLID_SMOOTH), fullscreen_(false),
+    bak_left_(0), bak_top_(0), bak_width_(0), bak_height_(0), menuID_(0)
 {
   // create window
   glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE | GLUT_ALPHA | GLUT_MULTISAMPLE );
@@ -48,16 +49,12 @@ GlutViewer(const char* _title, int _width, int _height)
   glutPassiveMotionFunc(passivemotion__);
   glutReshapeFunc(reshape__); 
   glutVisibilityFunc(visibility__);
-	glutIdleFunc(idle__);
+  glutIdleFunc(idle__);
   
   //Init glew for windows
   //#ifdef _WIN32
     glewInit();
   //#endif
-
-  // create popupmenu
-  //create_popup_menu();
-  //glEnable(GL_MULTISAMPLE); 
 }
   
 
@@ -75,8 +72,8 @@ GlutViewer::
 //-----------------------------------------------------------------------------
 
 
-GlutViewer* GlutViewer::current_window() { 
-  return windows__[glutGetWindow()]; 
+GlutViewer* GlutViewer::current_window() {
+  return windows__[glutGetWindow()];
 }
 
 void GlutViewer::display__(void) {
@@ -85,7 +82,7 @@ void GlutViewer::display__(void) {
 
 void GlutViewer::idle__(void) {
   current_window()->idle();
-} 
+}
 
 void GlutViewer::keyboard__(unsigned char key, int x, int y) {
   current_window()->keyboard((int)key, x, y);
@@ -109,69 +106,10 @@ void GlutViewer::reshape__(int w, int h) {
 
 void GlutViewer::special__(int key, int x, int y) {
   current_window()->special(key, x, y);
-}   
+}
 
 void GlutViewer::visibility__(int visible) {
   current_window()->visibility(visible);
-}
-
-void GlutViewer::processmenu__(int id) {
-  current_window()->processmenu(id);
-}
-
-
-//----------------------------------------------------------------------------
-
-
-void GlutViewer::create_popup_menu()
-{
-	// register 'processmenu__' as callback
-  // to popupmenu events
-  menuID_ = glutCreateMenu(processmenu__);
-	
-	// add entries to the popupmenu
-	glutAddMenuEntry("Wireframe",    WIREFRAME);
-	glutAddMenuEntry("Solid Flat",   SOLID_FLAT);
-	glutAddMenuEntry("Solid Smooth", SOLID_SMOOTH);
-	
-	// attach the menu to the right button
-	glutAttachMenu(GLUT_RIGHT_BUTTON);
-}
-
-
-//----------------------------------------------------------------------------
-
-
-void GlutViewer::clear_popup_menu()
-{
-  glutDestroyMenu(menuID_);
-  menuID_ = glutCreateMenu(processmenu__);
-}
-
-
-//----------------------------------------------------------------------------
-
-
-void GlutViewer::processmenu(int id)
-{
-  switch(id)
-  {
-    case WIREFRAME:
-      draw_mode_ = WIREFRAME;
-      break;
-    case SOLID_FLAT:
-      draw_mode_ = SOLID_FLAT;
-      break;
-    case SOLID_SMOOTH:
-      draw_mode_ = SOLID_SMOOTH;
-      break;
-    default:
-      std::cerr << "Draw mode not supported! Switching to 'Wireframe'." << std::endl;
-      draw_mode_ = WIREFRAME;
-      break;
-  }
-
-  glutPostRedisplay();
 }
 
 

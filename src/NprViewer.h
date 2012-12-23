@@ -18,13 +18,13 @@
 #include <string>
 #include <vector>
 
-#include "../../gl/TrackballViewer.h"
-#include "../../gl/shader.h"
-#include "../../gl/Mesh3D.h"
-#include "../../gl/Light3D.h"
-#include "../../gl/texture.h"
-#include "../../gl/TextureArray.h"
-#include "../../gl/fbo.h"
+#include "gl/TrackballViewer.h"
+#include "gl/shader.h"
+#include "gl/Mesh3D.h"
+#include "gl/Light3D.h"
+#include "gl/texture.h"
+#include "gl/TextureArray.h"
+#include "gl/fbo.h"
 
 
 //== CLASS DEFINITION =========================================================
@@ -32,13 +32,13 @@
 
 	      
 /*
- CartoonViewer.
+ NprViewer.
 */
-class CartoonViewer : public TrackballViewer
+class NprViewer : public TrackballViewer
 {
 public:
    
-  CartoonViewer(const char* _title, int _width, int _height);
+  NprViewer(const char* _title, int _width, int _height);
   
 	
   void loadMesh(const std::string& filenameOBJ, const std::string& filenameMTL = std::string());

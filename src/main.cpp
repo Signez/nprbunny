@@ -4,7 +4,7 @@
 //                                                                            
 //=============================================================================
 
-#include "CartoonViewer.h"
+#include "NprViewer.h"
 
 
 
@@ -12,7 +12,7 @@ int main(int argc, char **argv)
 {
 	glutInit(&argc, argv);
 	
-	CartoonViewer window("NPR Viewer", 800, 800);
+	NprViewer window("NPR Viewer", 800, 800);
 	
 	if(argc == 2)
 		window.loadMesh(argv[1]);

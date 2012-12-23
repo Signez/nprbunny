@@ -5,20 +5,20 @@
 //=============================================================================
 //=============================================================================
 //
-//  CLASS CartoonViewer - IMPLEMENTATION
+//  CLASS NprViewer - IMPLEMENTATION
 //
 //=============================================================================
 
 //== INCLUDES =================================================================
 
-#include "CartoonViewer.h"
-#include "../../utils/Mesh3DReader.h"
+#include "NprViewer.h"
+#include "utils/Mesh3DReader.h"
 
 //== IMPLEMENTATION ========================================================== 
 
 
-CartoonViewer::
-CartoonViewer(const char* _title, int _width, int _height)
+NprViewer::
+NprViewer(const char* _title, int _width, int _height)
 : TrackballViewer(_title, _width, _height)
 {
 	init();
@@ -29,7 +29,7 @@ CartoonViewer(const char* _title, int _width, int _height)
 
 
 void 
-CartoonViewer::
+NprViewer::
 init()
 {
 	// initialize parent
@@ -39,15 +39,15 @@ init()
 	set_scene_pos(Vector3(0.0, 0.0, 0.0), 2.0);
 
 	// load shaders
-	m_cartoonShader.create("cartoon.vs", "cartoon.fs");
-	m_depthShader.create("depth.vs", "depth.fs");
-	m_edgeShader.create("edge.vs", "edge.fs");
-	m_shakingShader.create("shaking.vs", "shaking.fs");
-	m_blendingShader.create("blending.vs","blending.fs");
+	m_cartoonShader.create("./shaders/cartoon.vs", "./shaders/cartoon.fs");
+	m_depthShader.create("./shaders/depth.vs", "./shaders/depth.fs");
+	m_edgeShader.create("./shaders/edge.vs", "./shaders/edge.fs");
+	m_shakingShader.create("./shaders/shaking.vs", "./shaders/shaking.fs");
+	m_blendingShader.create("./shaders/blending.vs","./shaders/blending.fs");
 
 	// load textures
-	m_cartoonShadingTexture.create("../../../data/textures/brush_", ".png", 16);
-	m_paperTexture.create("../../../data/textures/white-parchment-paper-texture.jpg");
+	m_cartoonShadingTexture.create("../data/textures/brush_", ".png", 16);
+	m_paperTexture.create("../data/textures/white-parchment-paper-texture.jpg");
 }
 
 
@@ -56,7 +56,7 @@ init()
 
 
 void
-CartoonViewer::
+NprViewer::
 reshape(int _w, int _h)
 {
 	TrackballViewer::reshape(_w,_h);
@@ -87,7 +87,7 @@ reshape(int _w, int _h)
 //-----------------------------------------------------------------------------
 
 void
-CartoonViewer::
+NprViewer::
 loadMesh(const std::string& filenameOBJ, const std::string& filenameMTL)
 {
 	// load mesh from obj
@@ -113,7 +113,7 @@ loadMesh(const std::string& filenameOBJ, const std::string& filenameMTL)
 
 
 void
-CartoonViewer::
+NprViewer::
 keyboard(int key, int x, int y)
 {
 	switch (key)
@@ -134,7 +134,7 @@ keyboard(int key, int x, int y)
 
 
 void 
-CartoonViewer::
+NprViewer::
 draw_scene(DrawMode _draw_mode)
 {
 	// draw cartoon shading
@@ -172,7 +172,7 @@ draw_scene(DrawMode _draw_mode)
 
 //-----------------------------------------------------------------------------
 void 
-CartoonViewer::
+NprViewer::
 drawCartoon(unsigned int vertexIndex) {
 
 	// clear screen
@@ -208,7 +208,7 @@ drawCartoon(unsigned int vertexIndex) {
 }
 
 //--------------------------------------------------------
-void CartoonViewer::drawTriangleByTriangle(unsigned int vertexIndex)
+void NprViewer::drawTriangleByTriangle(unsigned int vertexIndex)
 {
 	//Update the UVcoordinates
 	updateMeshUV();
@@ -261,7 +261,7 @@ void CartoonViewer::drawTriangleByTriangle(unsigned int vertexIndex)
 
 //--------------------------------------------------------
 
-void CartoonViewer::NormalPosAndUV(unsigned int x, Vector3 normal, Vector3 curvature, Vector2 center)
+void NprViewer::NormalPosAndUV(unsigned int x, Vector3 normal, Vector3 curvature, Vector2 center)
 {
 	Vector3 A_normal = m_mesh.getVertexNormal(x);
 	Vector3 A_position = m_mesh.getVertexPosition(x);
@@ -282,7 +282,7 @@ void CartoonViewer::NormalPosAndUV(unsigned int x, Vector3 normal, Vector3 curva
 }
 
 //--------------------------------------------------------
-void CartoonViewer::updateMeshUV()
+void NprViewer::updateMeshUV()
 {
 	//clear old TexCoord
 	m_mesh.m_vertexUV.clear();
@@ -301,7 +301,7 @@ void CartoonViewer::updateMeshUV()
 
 //-----------------------------------------------------------------------------
 
-Vector2 CartoonViewer::projectVertex(Vector3 vertex, const Matrix4 &transScreenCoor){
+Vector2 NprViewer::projectVertex(Vector3 vertex, const Matrix4 &transScreenCoor){
 	//double *mesh_transform = ( m_camera.getTransformation().Inverse() * m_mesh.getTransformation() ).matToArray();
 	//double *projectionMatrix = m_camera.getProjectionMatrix().matToArray();
 	//GLint viewport[4];
@@ -333,7 +333,7 @@ Vector2 CartoonViewer::projectVertex(Vector3 vertex, const Matrix4 &transScreenC
 }
 
 //--------------------------------------------------------
-void CartoonViewer::drawWholeMesh()
+void NprViewer::drawWholeMesh()
 {
 	//Update the UVcoordinates
 	updateMeshUV();
@@ -383,7 +383,7 @@ void CartoonViewer::drawWholeMesh()
 
 //-----------------------------------------------------------------------------
 void 
-CartoonViewer::
+NprViewer::
 drawDepth() {
 
 	// clear screen
@@ -425,7 +425,7 @@ drawDepth() {
 //-----------------------------------------------------------------------------
 
 void 
-CartoonViewer::
+NprViewer::
 renderFullScreenQuad()
 {
 	// render full screen quad (note that vertex coordinates are already in opengl coordinates, so no transformation required!)
@@ -444,7 +444,7 @@ renderFullScreenQuad()
 
 //-----------------------------------------------------------------------------
 void 
-CartoonViewer::
+NprViewer::
 drawEdge() {
 
 	// clear screen
@@ -467,7 +467,7 @@ drawEdge() {
 
 //-----------------------------------------------------------------------------
 void 
-CartoonViewer::
+NprViewer::
 shakeEdge() {
 
 	// clear screen
@@ -487,7 +487,7 @@ shakeEdge() {
 
 //-----------------------------------------------------------------------------
 void 
-CartoonViewer::
+NprViewer::
 blendCartoonAndEdge() {
 
 	// clear screen
